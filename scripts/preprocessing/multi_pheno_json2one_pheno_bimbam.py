@@ -7,7 +7,7 @@
 import os
 import re
 
-list_json_files=[os.path.join('../../processed_data/json_files', file) for file in os.listdir('../../processed_data/json_files') if 'pheno' in file]
+list_json_files=[os.path.join('../../processed_data/json_data', file) for file in os.listdir('../../processed_data/json_data') if 'pheno' in file]
 
 
 def process_json_bimbam(json_filename, bimbam_filename):
@@ -35,28 +35,26 @@ def process_json_bimbam(json_filename, bimbam_filename):
         
     container=[]
     
-    for (x,y) in enumerate(json_contents):
-    
-        strain_found=re.search('sample_name_2', y)
+    for el in json_contents[2].split(',{'):
         
-        if not (strain_found==None):
+        data=el.split(',')
         
-            value_found1=re.search('value', json_contents[x+1]) # trait value expected to be on next line
-            value_found2=re.search('value', json_contents[x+2]) # or trait value on second next line
+        for (x,y) in enumerate(data):
+        
+            strain_found=re.search('sample_name_2', y)
+        
+            if not (strain_found==None):
+        
+                value_found=re.search('value', data[x+1]) # trait value expected to be the next element
             
-            strain_extract= "".join(char for char in strain_found.string[-10:-1] if char.isalnum())
-            #print('strain extract is ', strain_extract)
+                strain_extract= "".join(char for char in strain_found.string[-7:-1] if char.isalnum())
+                #print('strain extract is ', strain_extract)
             
-            if not (value_found1==None):
-                value_extract="".join(char for char in value_found1.string[-10:-1] if char.isdigit() or char=='.')
-                #print('value extract is ', value_extract)
-                container.append([strain_extract, trait_dataset, value_extract])
+                if not (value_found==None):
+                    value_extract="".join(char for char in value_found.string[-10:-1] if char.isdigit() or char=='.')
+                    #print('value extract is ', value_extract)
+                    container.append([strain_extract, trait_dataset, value_extract])
                 
-            elif not(value_found2==None):
-                value_extract="".join(char for char in value_found2.string[-10:-1] if char.isdigit() or char=='.')
-                #print('value extract is ', value_extract)
-                container.append([strain_extract, trait_dataset, value_extract])
-    
     #print('container is ', container)
     
     for a in container:
@@ -111,7 +109,7 @@ for jsonf in list_json_files:
     
     if contains_phenotype_data(jsonf):
         print(f'File {jsonf} contains data and can go for actual processing')
-        process_json_bimbam(jsonf, '../../processed_data/project_phenotype_file.bimbam')
+        process_json_bimbam(jsonf, '../../processed_data/diabetes_phenotype_file.bimbam')
     
     
     

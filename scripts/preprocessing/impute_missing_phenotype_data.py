@@ -18,7 +18,7 @@ f1.close()
 
 # 2. Read phenotype data in right order
 
-trimmed_BXD_data=pd.read_csv('../../processed_data/project_fully_trimmed_phenotype_file.bimbam', header=None, names=order_traits)
+trimmed_BXD_data=pd.read_csv('../../processed_data/diabetes_fully_trimmed_phenotype_file.bimbam', header=None, names=order_traits)
 trimmed_data=trimmed_BXD_data.copy()
 
 #print('trimmed data looks like \n', trimmed_data.head())
@@ -47,7 +47,7 @@ imputed_BXD_data=pd.DataFrame(imputed_data)
 
 # 4. Save new dataset
 
-imputed_BXD_data.to_csv("../../processed_data/project_imputed_phenotype_file.bimbam", index=False, header=False)
+imputed_BXD_data.to_csv("../../processed_data/diabetes_imputed_phenotype_file.bimbam", index=False, header=False)
 
 
 # 5. Save the new order of the trait names

@@ -7,7 +7,7 @@
 import os
 import pandas as pd
 
-list_csv_files=[os.path.join('../../raw_data/global_search_datasets', file) for file in os.listdir('../../raw_data/global_search_datasets') if 'trimmed' in file]
+list_csv_files=[os.path.join('../../raw_data/', file) for file in os.listdir('../../raw_data/') if 'trimmed' in file]
 
 container=set()
 

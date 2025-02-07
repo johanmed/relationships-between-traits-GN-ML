@@ -13,7 +13,7 @@ Apply series of modifications to project_phenotype_file.bimbam to make it contai
 
 # 1.1. Reformat phenotype file
 
-f=open('../../processed_data/project_phenotype_file.bimbam')
+f=open('../../processed_data/diabetes_phenotype_file.bimbam')
 
 read_lines=f.readlines()
 
@@ -105,9 +105,9 @@ final_transposed=final.transpose(copy=True) # need to transpose because lines on
 
 # 5. Save data
 
-final_transposed.to_csv('../../processed_data/project_trimmed_phenotype_file.bimbam') # save traits and lines names with data
+final_transposed.to_csv('../../processed_data/diabetes_trimmed_phenotype_file.bimbam') # save traits and lines names with data
 
-final_transposed.to_csv('../../processed_data/project_fully_trimmed_phenotype_file.bimbam', header=False, index=False) # save data without traits and lines names
+final_transposed.to_csv('../../processed_data/diabetes_fully_trimmed_phenotype_file.bimbam', header=False, index=False) # save data without traits and lines names
 
 order_trait_names= final_transposed.columns # extract order of trait names for future referencing
 #print('Final trait names are: \n', order_trait_names)

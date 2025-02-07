@@ -23,7 +23,7 @@ final_geno=pd.concat([al1, al2, ori_geno_no_lines], axis=1)
 #print('Final genotype data is: \n', final_geno.head())
 
 
-final_geno.to_csv('../../processed_data/project_genotype_file.bimbam', header=False) # save dataframe
+final_geno.to_csv('../../processed_data/diabetes_genotype_file.bimbam', header=False) # save dataframe
 
 
 
