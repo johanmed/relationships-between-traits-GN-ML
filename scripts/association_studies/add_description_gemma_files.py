@@ -34,15 +34,15 @@ info.close()
 ordered_info_read=[]
 
 for traits in order_read:
-    for ind in range(len(info_read)-7):
+    for ind in range(len(info_read)):
         data=info_read[ind]
         #print('data is: ', data)
         trait_found=re.search('Trait', data)
         if not (trait_found==None):
             trait_extract="".join(char for char in trait_found.string[9:] if char.isalnum())
             if trait_extract in traits:
-                proba_desc=info_read[ind+5:ind+7] # slice where description is expected
-                for desc in proba_desc:
+                line_interest=info_read[ind+2]
+                for desc in line_interest.split(',"'):
                     description_found=re.search('description', desc)
                     if not (description_found==None):
                         ordered_info_read.append(desc)# add only the description line
@@ -56,22 +56,22 @@ metadata=[] # metadata of phenotypes will be added in the order of the phenotype
 
 for line in ordered_info_read:
     description_found=re.search('description', line)
-    description_extract= "".join(char for char in description_found.string[15:] if char.isalnum() or char==' ')
+    description_extract= "".join(char for char in description_found.string[14:] if char.isalnum() or char==' ')
     #print('description extract is ', description_extract)
     metadata.append(description_extract)
     
 #print('final metadata is: ', metadata)
 
 
-def add_desc_gemma_assoc(file, val1, val2):
+def add_desc_gemma_assoc(file, val):
         """
-        Write to a new gemma file contents of old gemma file, val1 (trait category), val2(full description) tab separated
+        Write to a new gemma file contents of old gemma file, val (description) tab separated
         """
         
         gemma_content=open(file).readlines()
         to_write=[]
         for u in gemma_content:
-            to_write.append(f'{u.strip()}\t{val1}\t{val2}')
+            to_write.append(f'{u.strip()}\t{val}')
             
         ready_to_write='\n'.join(to_write)
         gemma_write=open(f'new_{file}', 'w')
@@ -87,18 +87,8 @@ def process_file(metadata, gemma_files, add_desc_gemma_assoc):
             o, p, q, r = f.split('_')
             l, m, n = r.split('.')
             #print('num is: ', l[5:])
-            if i==int(l[5:]) and ('diabetes' in j or 'diabet' in j or 'diabetic' in j or 'leptin' in j or 'insulin' in j or 'gluc' in j): # might need to add more keywords related to diabetes
-                #print(f'Inferred diabetes trait for {f}')
-                add_desc_gemma_assoc(f, 0, j)
-            elif i==int(l[5:]) and ('immune' in j or 'immunity' in j or 'defensin' in j or 'innate' in j): # might need to add more keywords related to immune system
-                #print(f'Inferred Immune system trait for {f}')
-                add_desc_gemma_assoc(f, 1, j)
-            elif i==int(l[5:]) and ('gut' in j or 'gastro' in j or 'gastric' in j or 'trypsin' in j): # might need to add more keywords related to gastrointestinal system
-                #print(f'Inferred Gut microbiome trait for {f}')
-                add_desc_gemma_assoc(f, 2, j)
-            elif i==int(l[5:]): # for traits with undetermined category
-                #print(f'Unable to infer category of trait for {f}')
-                add_desc_gemma_assoc(f, 3, j)
+            if i==int(l[5:]):
+                add_desc_gemma_assoc(f, j)
                 
 
 

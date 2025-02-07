@@ -4,9 +4,7 @@
 
 # Create full dataset after addition of trait category and full description
 
-"""
-Might need to process by batch if input files are too many for whole data to fit in memory at once. In this case temporary files need to be processed manually to obtain a common file by removing headers. Chromosome X need to be encoded using ord('X')=88 for further processing as dataframe
-"""
+# Chromosome X need to be encoded using ord('X')=88 for further processing as dataframe
 
 import sys
 import argparse
@@ -26,14 +24,16 @@ for fn in args.files:
     print(f"Processing {fn}...")
     with open(fn) as f:
         for line in f.readlines():
-            chr_num,rs,pos,miss,a1,a0,af,beta,se,l_mle,p_lrt,desc,full_desc = line.rstrip('\n').split('\t')
+            chr_num,rs,pos,miss,a1,a0,af,beta,se,l_mle,p_lrt,full_desc = line.rstrip('\n').split('\t')
             
             if chr_num=='chr':
                 continue # ignore header
             elif (chr_num=='-9'):
                 continue # ignore when chr_num=-9
+            elif chr_num=='X' or chr_num=='Y':
+                chr_num=ord(chr_num)
                     
-            container.append([chr_num, pos, af, beta, se, l_mle, p_lrt, desc, full_desc])
+            container.append([chr_num, pos, af, beta, se, l_mle, p_lrt, full_desc])
         
                  
                  
@@ -41,6 +41,6 @@ for fn in args.files:
 
 import pandas as pd
 
-df=pd.DataFrame(container, columns=['chr_num', 'pos', 'af', 'beta', 'se', 'l_mle', 'p_lrt', 'desc', 'full_desc'])
+df=pd.DataFrame(container, columns=['chr_num', 'pos', 'af', 'beta', 'se', 'l_mle', 'p_lrt', 'full_desc'])
 
-df.to_csv('../../../project_dataset_expression_traits_with_desc_full_desc.csv', index=False)
+df.to_csv('../../../diabetes_gemma_association_data2.csv', index=False, header=False) # need to save the data in chunk and omit header accordingly as all the files cant be processed and turned into a DataFrame at once
