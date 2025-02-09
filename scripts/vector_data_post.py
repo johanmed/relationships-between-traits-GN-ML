@@ -15,7 +15,7 @@ Data of each column of the training are plotted in histogram to confirm quality
 import numpy as np
 import pandas as pd
 
-from generalize_cluster_assignment import full_X_rec as full_X
+full_X=pd.read_csv('../../../diabetes_gemma_association_data_plrt_filtered_clustering_data.csv')
 
 print('full_X looks like: \n', full_X)
 
@@ -48,7 +48,7 @@ fig.savefig(os.path.join(out_dir, "Project_Quality_Check_Before_Transformation_v
 
 # 4. Extract clusters using chr_num and chr_pos
 
-from sklearn.cluster import KMeans
+from sklearn.cluster import MiniBatchKMeans
 
 from vector_data_pre import perform_clustering
 

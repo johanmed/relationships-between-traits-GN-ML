@@ -15,7 +15,7 @@ Data of each column of the training are plotted in histogram to confirm quality
 import numpy as np
 import pandas as pd
 
-full_X=pd.read_csv('../../../../project_dataset_all_traits_p_lrt_filtered.csv', usecols=['chr_num', 'pos', 'p_lrt', 'desc', 'full_desc'])
+full_X=pd.read_csv('../../../diabetes_gemma_association_data_plrt_filtered.csv', usecols=['chr_num', 'pos', 'p_lrt', 'full_desc'])
 
 print('full_X looks like: \n', full_X)
 
@@ -57,10 +57,10 @@ fig.savefig(os.path.join(out_dir, "Project_Quality_Check_Before_Transformation_v
 
 # 4. Extract clusters using chr_num and chr_pos
 
-from sklearn.cluster import KMeans
+from sklearn.cluster import MiniBatchKMeans
 
 def perform_clustering(X_train, X_valid, X_test):
-    prelim_clustering=KMeans(n_clusters=5, algorithm='elkan', random_state=2024)
+    prelim_clustering=MiniBatchKMeans(n_clusters=5, random_state=2024, n_init=10)
 
     prelim_clustering1=prelim_clustering.fit_transform(np.array(X_train[['chr_num', 'pos']]).reshape(-1, 2))
     X_train[['combined_chr_num_pos1', 'combined_chr_num_pos2', 'combined_chr_num_pos3', 'combined_chr_num_pos4', 'combined_chr_num_pos5']]=prelim_clustering1
@@ -118,7 +118,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 
-custom_preprocessing=Pipeline([('cluster', KMeans(n_clusters=5, algorithm='elkan', random_state=2024)), ('standardize', StandardScaler()), ('reduce', PCA(n_components=2, random_state=2024))])
+custom_preprocessing=Pipeline([('cluster', MiniBatchKMeans(n_clusters=5, random_state=2024, n_init=10)), ('standardize', StandardScaler()), ('reduce', PCA(n_components=2, random_state=2024))])
 
 preprocessing_hits=ColumnTransformer([('plrt_chr_num_pos', custom_preprocessing, ['p_lrt', 'chr_num', 'pos'])], remainder=StandardScaler())
 

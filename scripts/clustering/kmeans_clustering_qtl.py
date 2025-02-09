@@ -42,7 +42,6 @@ X_train_full= pd.concat([X_train, X_valid]) # define bigger training set to trai
 from sklearn.cluster import MiniBatchKMeans # import MiniBatchKMeans class
 from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt # import plot manager
-from sklearn.metrics import classification_report
 from sklearn.pipeline import Pipeline
 
 from general_clustering import ModellingKMeans
@@ -70,22 +69,30 @@ class Columns2Clustering(ModellingKMeans):
         return preprocessed_training, preprocessed_validation, preprocessed_test
         
 
-    def perform_kmeans_clustering(self, reduced_features_valid):
+    def perform_kmeans_clustering(self, reduced_features_valid, n_clusters=10):
         """
-        Run KMeans for number of clusters on training and save predictions and distances to centroids
+        Run KMeans for number of clusters on training
         """
-        kmeans_clustering=Pipeline([('preprocessing_qtl', preprocessing_qtl), ('kmeans', MiniBatchKMeans(random_state=2024))])
+        n_cluster_sil=[]
+        for num in range(2, n_clusters):
+            kmeans_clustering=Pipeline([('preprocessing_qtl', preprocessing_qtl), ('kmeans', MiniBatchKMeans(random_state=2024, n_init=10, n_clusters=num))])
+            kmeans_clustering.fit(self.training)
+            y_pred=kmeans_clustering.predict(self.validation)
+            
+            sil=silhouette_score(reduced_features_valid, y_pred)
+            print('The silhouette score obtained as clustering performance measure is:', sil)
+            n_cluster_sil.append([num, sil])
+            
+            
+        def sort_second(arr):
+            return arr[1]
+            
+        sorted_n_cluster_sil=sorted(n_cluster_sil, key=sort_second, reverse=True)
+        
+        kmeans_clustering=Pipeline([('preprocessing_qtl', preprocessing_qtl), ('kmeans', MiniBatchKMeans(random_state=2024, n_init=10, n_clusters=sorted_n_cluster_sil[0][0]))])
         kmeans_clustering.fit(self.training)
-        #print('The labels assigned to the following training data \n', X_train[:5], ' are respectively: \n', kmeans.labels_[:5]) # check labels of first 5 training data
-        y_pred=kmeans_clustering.predict(self.validation)
-        #print('The labels assigned to the following validation data \n', X_valid, ' are respectively: \n', y_pred[:5]) # check labels assigned to first 5 validation data
-
-        distance_inst_centro=kmeans_clustering.transform(self.training).round(2) # Save distance of instances to centroids infered for the best number of clusters
-        #print('The distances to each centroid for the first 5 instances are: \n', distance_inst_centro[:5]) # can change to see for more
         
-        print('The silhouette score obtained as clustering performance measure is:', silhouette_score(reduced_features_valid, y_pred))
-        
-        return kmeans_clustering, y_pred, distance_inst_centro
+        return kmeans_clustering
 
 
 
@@ -128,17 +135,13 @@ def main():
 
         actual_clustering=clustering_task.perform_kmeans_clustering(X_valid_features)
 
-        joblib.dump(actual_clustering[0][1], 'kmeans_clustering/kmeans_clustering_qtl.pkl')
+        joblib.dump(actual_clustering[1], 'kmeans_clustering/kmeans_clustering_qtl.pkl')
         
-        #Columns2Clustering.visualize_plot(Columns2Clustering.plot_kmeans, actual_clustering[0][1], X_train_features)
+        #Columns2Clustering.visualize_plot(Columns2Clustering.plot_kmeans, actual_clustering[1], X_train_features)
 
-        Columns2Clustering.visualize_plot(Columns2Clustering.plot_kmeans, actual_clustering[0][1], X_valid_features)
+        Columns2Clustering.visualize_plot(Columns2Clustering.plot_kmeans, actual_clustering[1], X_valid_features)
 
-        prediction_clusters=actual_clustering[1]
-
-        distances_centroids_validation=actual_clustering[2]
-
-    
+        
 
 
 main()
