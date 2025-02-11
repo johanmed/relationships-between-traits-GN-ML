@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 """
+Script 14b
 Dependencies:
 - vector_data_pre.py -> data, preprocessing_qtl
 - general_clustering -> ModellingBirch
@@ -49,7 +50,9 @@ out_dir=os.path.abspath('../../output/') # define directory to save plots to
 class Columns2Clustering(ModellingBirch):
 
     """
-    Represent clustering task on only 2 columns extracted from dimensionality reduction
+    Represent clustering task on only 2 columns obtained from transformation
+    Try different number of clusters and select the one with the best silhouette score
+    Return pipeline: QTL transformation + clustering with the best number of clusters
     """
     
     def get_features(self):
@@ -78,12 +81,12 @@ class Columns2Clustering(ModellingBirch):
             print('The silhouette score obtained as clustering performance measure is:', sil)
             n_cluster_sil.append([num, sil])
             
-        def sort_second(arr):
+        def sort_second(arr): # utility function to sort based on second element
             return arr[1]
             
-        sorted_n_cluster_sil=sorted(n_cluster_sil, key=sort_second, reverse=True)
+        sorted_n_cluster_sil=sorted(n_cluster_sil, key=sort_second, reverse=True) # sort according to the highest silhouette score
         
-        birch_clustering=Pipeline([('preprocessing_qtl', preprocessing_qtl), ('birch', Birch(n_clusters=sorted_n_cluster_sil[0][0]))])
+        birch_clustering=Pipeline([('preprocessing_qtl', preprocessing_qtl), ('birch', Birch(n_clusters=sorted_n_cluster_sil[0][0]))]) # reperform clustering with the best number of clusters
         birch_clustering.fit(self.training)
         
         return birch_clustering
@@ -107,11 +110,11 @@ import joblib
 
 def main():
 
-    if os.path.exists('birch_clustering/birch_clustering_qtl.pkl'):
+    if os.path.exists('birch_clustering/birch_clustering_qtl.pkl'): # check if this has already been saved
         
         print('The model has already been trained and saved on disk!')
     
-    else:
+    else: # Proceed to clustering and  save model if not yet done
 
         clustering_task=Columns2Clustering(X_train, X_valid, X_test)
 
@@ -123,7 +126,7 @@ def main():
    
         #Columns2Clustering.visualize_plot(Columns2Clustering.plot_birch, actual_clustering[1], X_train_features)
     
-        Columns2Clustering.visualize_plot(Columns2Clustering.plot_birch, actual_clustering[1], X_valid_features)
+        Columns2Clustering.visualize_plot(Columns2Clustering.plot_birch, actual_clustering[1], X_valid_features) # Plot only validation data (more manageable than training data for plotting)
 
 
 

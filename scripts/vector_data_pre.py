@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 """
+Script 13a
 Summary:
 This file contains code to load data from dataset BEFORE unsupervised machine learning
 Data of each column are plotted in histogram to assess quality
@@ -35,9 +36,7 @@ training_set, validation_set, test_set=define_sets(full_X)
 
 training_validation_set=pd.concat([training_set, validation_set]) # useful later clustering results analysis
 
-# Remove full_desc
-
-training_set= training_set[['chr_num', 'pos', 'p_lrt']]
+training_set= training_set[['chr_num', 'pos', 'p_lrt']] # select features of interest
 validation_set= validation_set[['chr_num', 'pos', 'p_lrt']]
 test_set= test_set[['chr_num', 'pos', 'p_lrt']]
 
@@ -55,7 +54,7 @@ fig.savefig(os.path.join(out_dir, "Project_Quality_Check_Before_Transformation_v
 
 
 
-# 4. Extract clusters using chr_num and chr_pos
+# 4. Extract clusters using chr_num and chr_pos just for transformation quality assessment
 
 from sklearn.cluster import MiniBatchKMeans
 
@@ -79,7 +78,7 @@ def perform_clustering(X_train, X_valid, X_test):
 clustered_training_set, clustered_validation_set, clustered_test_set=perform_clustering(training_set, validation_set, test_set)
 
 
-# 5. Perform feature engineering
+# 5. Perform feature engineering just for transformation quality assessment
 
 from sklearn.preprocessing import StandardScaler # import transformer
 

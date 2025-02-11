@@ -2,6 +2,7 @@
 
 """
 Summary:
+Script 17
 This file contains code to load data from dataset AFTER unsupervised machine learning
 Data of each column are plotted in histogram to assess quality
 Training, validation and test sets are defined from X data randomly
@@ -15,7 +16,7 @@ Data of each column of the training are plotted in histogram to confirm quality
 import numpy as np
 import pandas as pd
 
-full_X=pd.read_csv('../../../diabetes_gemma_association_data_plrt_filtered_clustering_data.csv')
+full_X=pd.read_csv('../../../diabetes_gemma_association_data_plrt_filtered_clustering_data.csv') # read data with clustering informations
 
 print('full_X looks like: \n', full_X)
 
@@ -24,12 +25,12 @@ print('full_X looks like: \n', full_X)
 
 from sklearn.model_selection import train_test_split # import utility for splitting
 
-from vector_data_pre import define_sets
+from vector_data_pre import define_sets # import utility function previously defined in vector_data_pre
     
 training_set, validation_set, test_set=define_sets(full_X)
 
 
-training_validation_set=pd.concat([training_set, validation_set]) # get training + validation set
+training_validation_set=pd.concat([training_set, validation_set]) # combine training and validation set
 
 
 # 3. Plot histogram of training features and assess quality
@@ -46,7 +47,7 @@ fig.savefig(os.path.join(out_dir, "Project_Quality_Check_Before_Transformation_v
 
 
 
-# 4. Extract clusters using chr_num and chr_pos
+# 4. Extract clusters using chr_num and chr_pos just for transformation quality assessment
 
 from sklearn.cluster import MiniBatchKMeans
 
@@ -55,11 +56,11 @@ from vector_data_pre import perform_clustering
 clustered_training_set, clustered_validation_set, clustered_test_set=perform_clustering(training_set, validation_set, test_set)
 
 
-# 5. Perform feature engineering
+# 5. Perform feature engineering just for transformation quality assessment
 
 from sklearn.preprocessing import StandardScaler # import transformer
 
-from vector_data_pre import scale
+from vector_data_pre import scale # import utility function previously defined in vector_data_pre
 
 scaled_training_set, scaled_validation_set, scaled_test_set=scale(clustered_training_set, clustered_validation_set, clustered_test_set)
 

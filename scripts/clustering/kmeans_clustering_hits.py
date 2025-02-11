@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 """
+Script 15a
 Summary:
 This script contains code to run KMeans clustering algorithm on data
 Dependencies:
@@ -72,6 +73,8 @@ class Columns2Clustering(ModellingKMeans):
     def perform_kmeans_clustering(self, reduced_features_valid, n_clusters=10):
         """
         Run KMeans for number of clusters on training
+        Try different number of clusters and select the one with the best silhouette score
+        Return pipeline: hits transformation + clustering with the best number of clusters
         """
         n_cluster_sil=[]
         for num in range(2, n_clusters):
@@ -84,12 +87,12 @@ class Columns2Clustering(ModellingKMeans):
             n_cluster_sil.append([num, sil])
             
             
-        def sort_second(arr):
+        def sort_second(arr): # utility function to sort based on second element
             return arr[1]
             
-        sorted_n_cluster_sil=sorted(n_cluster_sil, key=sort_second, reverse=True)
+        sorted_n_cluster_sil=sorted(n_cluster_sil, key=sort_second, reverse=True) # sort according to the highest silhouette score
         
-        kmeans_clustering=Pipeline([('preprocessing_hits', preprocessing_hits), ('kmeans', MiniBatchKMeans(random_state=2024, n_init=10, n_clusters=sorted_n_cluster_sil[0][0]))])
+        kmeans_clustering=Pipeline([('preprocessing_hits', preprocessing_hits), ('kmeans', MiniBatchKMeans(random_state=2024, n_init=10, n_clusters=sorted_n_cluster_sil[0][0]))]) # reperform clustering with the best number of clusters
         kmeans_clustering.fit(self.training)
         
         return kmeans_clustering
@@ -123,11 +126,11 @@ import joblib
 
 def main():
     
-    if os.path.exists('kmeans_clustering/kmeans_clustering_hits.pkl'):
+    if os.path.exists('kmeans_clustering/kmeans_clustering_hits.pkl'): # check if this has already been saved
         
         print('The model has already been trained and saved on disk!')
         
-    else:
+    else: # Proceed to clustering and  save model if not yet done
     
         clustering_task=Columns2Clustering(X_train, X_valid, X_test)
 
@@ -139,7 +142,7 @@ def main():
 
         #Columns2Clustering.visualize_plot(Columns2Clustering.plot_kmeans, actual_clustering[1], X_train_features)
 
-        Columns2Clustering.visualize_plot(Columns2Clustering.plot_kmeans, actual_clustering[1], X_valid_features)
+        Columns2Clustering.visualize_plot(Columns2Clustering.plot_kmeans, actual_clustering[1], X_valid_features) # Plot only validation data (more manageable than training data for plotting)
 
         
 
