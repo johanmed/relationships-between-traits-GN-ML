@@ -56,19 +56,11 @@ from vector_data_pre import perform_clustering
 clustered_training_set, clustered_validation_set, clustered_test_set=perform_clustering(training_set, validation_set, test_set)
 
 
-# 5. Perform feature engineering just for transformation quality assessment
 
-from sklearn.preprocessing import StandardScaler # import transformer
-
-from vector_data_pre import scale # import utility function previously defined in vector_data_pre
-
-scaled_training_set, scaled_validation_set, scaled_test_set=scale(clustered_training_set, clustered_validation_set, clustered_test_set)
-
-
-# 6. Plot histogram of transformed training features and confirm quality
+# 5. Plot histogram of transformed training features and confirm quality
 
 fig, ax=plt.subplots(figsize=(20, 20))
-scaled_training_set.hist(ax=ax, bins=50, color='black', alpha=0.7)
+clustered_training_set.hist(ax=ax, bins=50, color='black', alpha=0.7)
 plt.show()
 fig.savefig(os.path.join(out_dir, "Project_Quality_Check_After_Transformation_v2"), dpi=500)
 

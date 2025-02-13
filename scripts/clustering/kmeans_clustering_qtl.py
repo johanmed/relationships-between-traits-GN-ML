@@ -19,9 +19,9 @@ Modelling by QTL (chromosome number)
 
 import os
 
-from vector_data_pre import scaled_training_set as X_train
-from vector_data_pre import scaled_validation_set as X_valid
-from vector_data_pre import scaled_test_set as X_test
+from vector_data_pre import training_set as X_train
+from vector_data_pre import validation_set as X_valid
+from vector_data_pre import test_set as X_test
 
 from vector_data_pre import preprocessing_qtl
 

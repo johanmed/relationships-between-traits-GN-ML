@@ -12,22 +12,22 @@ import numpy as np
 
 def compare_info_trait(trait_pos):
     """
-    Compare p_lrt for each combination of chr_num and pos
+    Look for outliers in p_lrt values for each combination of chr_num and pos
     Return diff
     """
     
-    diff=[]
+    diff=[] # store data with outlier
     
-    for loc in trait_pos.keys():
+    for loc in trait_pos.keys(): # iterates through all marker positions of a given trait
         data = trait_pos[loc]
-        non_valid=np.isnan(data)
-        data=[j for i,j in enumerate(data) if non_valid[i]==False]
-        med=np.median(data)
-        q25, q75=np.percentile(data, [25, 75])
-        q_range = q75 - q25
+        non_valid=np.isnan(data) # check for nan values
+        data=[j for i,j in enumerate(data) if non_valid[i]==False] # remove nan values
+        med=np.median(data) # compute median
+        q25, q75=np.percentile(data, [25, 75]) # compute Q1 and Q3
+        q_range = q75 - q25 # compute interquartile range
         for datum in data:
-            if not (q25 - (1.5 * q_range) <= datum <= q75 + (1.5 * q_range)):
-                diff.append([loc, datum])     
+            if not (q25 - (1.5 * q_range) <= datum <= q75 + (1.5 * q_range)): # check if datum is an outlier
+                diff.append([loc, datum]) # add to diff if outlier
     return diff
     
     
@@ -38,14 +38,14 @@ def analyze_traits(container, compare_info_trait):
     """
     assoc_diff={}
     
-    for trait in container.keys():
+    for trait in container.keys(): # take one trait
         print(f'Analyzing trait {trait}...')
-        trait_diff=compare_info_trait(container[trait])
+        trait_diff=compare_info_trait(container[trait]) # process it
     
         if len(trait_diff)>=1:
-            print(f'The trait {trait} shows differences in p-lrt in at least 1 genomic position that could be statistically meaningful')
+            print(f'The trait {trait} shows differences in p-lrt in at least 1 genomic position that could be statistically meaningful') # warn finding of a problematic trait
     
-            assoc_diff[trait]=trait_diff
+            assoc_diff[trait]=trait_diff # add trait and problematic locations to dictionary assoc_diff
     
     return assoc_diff
     
@@ -55,7 +55,7 @@ def analyze_traits(container, compare_info_trait):
 def store_assoc_data(file):
     """
     Read association info from dataset 'file' not filtered
-    Store each trait and association data in dictionary 'container' for efficient lookup
+    Store each trait and association data in dictionary 'container' for efficient lookup and replicate accumulation
     Return container
     """
     
@@ -76,14 +76,14 @@ def store_assoc_data(file):
         full_desc=full_desc.strip('\n')
         chr_num_pos= chr_num + ' ' + pos
         
-        if full_desc in container.keys():
-            if chr_num_pos in container[full_desc].keys():
-                container[full_desc][chr_num_pos].append(float(p_lrt))
+        if full_desc in container.keys(): # check existence of trait in container
+            if chr_num_pos in container[full_desc].keys(): # check existence of the location for the trait
+                container[full_desc][chr_num_pos].append(float(p_lrt)) # add the p-value if yes
             else:
-                container[full_desc][chr_num_pos]=[float(p_lrt)]
+                container[full_desc][chr_num_pos]=[float(p_lrt)] # add a new location and initialize the array accumulating the p-values
                 
         else:
-            container[full_desc] = {chr_num_pos: [float(p_lrt)]}
+            container[full_desc] = {chr_num_pos: [float(p_lrt)]} # add the trait, the location and initialize the array accumulating the p-values
             
         #print('The container is: \n', container)
     #print('The length of the container is: ', len(container))
@@ -98,21 +98,23 @@ def store_assoc_data(file):
 import os
 import json
 
-if os.path.exists('../../../data_compare_assoc_data.json'):
+# Improve memory usage by saving results of association data processing on disk
+
+if os.path.exists('../../../data_compare_assoc_data.json'): # check if already saved on disk
 
     f1=open('../../../data_compare_assoc_data.json')
-    json_content=f1.read()
+    json_content=f1.read() # read data
     f1.close()
     
-    dict_data=json.loads(json_content)
+    dict_data=json.loads(json_content) # transform back to dictionary
 
 else:
 
-    dict_data=store_assoc_data('../../../diabetes_gemma_association_data.csv')
+    dict_data=store_assoc_data('../../../diabetes_gemma_association_data.csv') # process traits and association data
 
     f2=open('../../../data_compare_assoc_data.json', 'w')
-    dict2json_content=json.dumps(dict_data)
-    f2.write(dict2json_content)
+    dict2json_content=json.dumps(dict_data) # save dictionary as json
+    f2.write(dict2json_content) # write to a file
     f2.close()
 
 # 2. Separate non-duplicated and duplicated traits from dict_data
@@ -122,16 +124,16 @@ non_dup_traits={}
 
 for trait in dict_data.keys():
 
-    num_loc=len(dict_data[trait])
+    num_loc=len(dict_data[trait]) # get number of genomic locations saved for trait
     
     for loc in dict_data[trait]:
-        num_loc -= 1
-        if len(dict_data[trait][loc]) > 1:
-            dup_traits[trait] = dict_data[trait]
-            break
+        num_loc -= 1 # remove 1 for each location examined
+        if len(dict_data[trait][loc]) > 1: # check if location has many p-values -> duplicated trait
+            dup_traits[trait] = dict_data[trait] # if yes, save the duplicated trait and all association data in dup_traits at once
+            break # no need to go to another genomic position for the trait
             
-    if num_loc == 0:
-        non_dup_traits[trait] = dict_data[trait]
+    if num_loc == 0: # check if all genomic locations have been processed for the trait. If yes, and no break -> non-duplicated trait
+        non_dup_traits[trait] = dict_data[trait] # save trait and all association data in non_dup_traits at once
 
 print('The duplicated traits are: ', dup_traits.keys())
 
@@ -140,7 +142,7 @@ print('The non-duplicated traits are: ', non_dup_traits.keys())
 
 # 3. Proceed to actual analysis of each duplicated trait and search for differences in p_lrt that might be relevant statistically
 
-results=analyze_traits(dup_traits, compare_info_trait)
+results=analyze_traits(dup_traits, compare_info_trait) # look for outliers in hits p-values only for duplicated traits
 
 #print('The number of duplicated traits with dichotomy in association data: ', len(results))
 
@@ -161,10 +163,10 @@ fig, (ax1, ax2)=plt.subplots(1, 2, figsize=(20, 10))
 
 # pie chart parameters
 
-data_total=[len(dup_traits), len(dict_data)-len(dup_traits)]
+data_total=[len(dup_traits), len(dict_data)-len(dup_traits)] # get number of duplicated_traits out of the total traits
 labels_total=['Traits with many occurences', 'Traits with only 1 occurence']
 
-data_dup = [len(results), len(dup_traits) - len(results)]
+data_dup = [len(results), len(dup_traits) - len(results)] # get number of traits with outliers in hits p-values out of all the duplicated traits 
 labels_dup = ['Traits with outliers for p-values hits', 'Traits with no outlier']
 
 gwas_data = [(trait, len(results[trait])) for trait in results.keys()]
@@ -176,11 +178,11 @@ for trait, num_loci in gwas_data:
 explode=(0.1, 0)
 
 
-ax1.pie(data_total, labels=labels_total, colors=['b', 'g'], autopct='%1.2f%%', explode=explode, startangle=-90, textprops={'fontsize':15})
+ax1.pie(data_total, labels=labels_total, colors=['b', 'g'], autopct='%1.2f%%', explode=explode, startangle=-90, textprops={'fontsize':15}) # plot replicated traits out of all traits
 
 ax1.set_title('Replicated vs non-replicated traits', fontsize=20)
 
-ax2.pie(data_dup, labels=labels_dup, colors=['r', 'g'], autopct='%1.2f%%', explode=explode, startangle=35, textprops={'fontsize':15})
+ax2.pie(data_dup, labels=labels_dup, colors=['r', 'g'], autopct='%1.2f%%', explode=explode, startangle=35, textprops={'fontsize':15}) # plot traits with outliers in hits p-values out of the replicated/duplicated traits
 
 ax2.set_title('GWAS results comparison locus by locus of replicated traits', fontsize=20)
 

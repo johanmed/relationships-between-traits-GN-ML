@@ -15,9 +15,9 @@ Modelling by hits (chromosome number + marker position)
 
 import os
 
-from vector_data_pre import scaled_training_set as X_train
-from vector_data_pre import scaled_validation_set as X_valid
-from vector_data_pre import scaled_test_set as X_test
+from vector_data_pre import training_set as X_train
+from vector_data_pre import validation_set as X_valid
+from vector_data_pre import test_set as X_test
 
 from vector_data_pre import preprocessing_hits
 
@@ -110,7 +110,8 @@ def main():
     if os.path.exists('birch_clustering/birch_clustering_hits.pkl'): # check if this has already been saved
         
         print('The model has already been trained and saved on disk!')
-    
+        
+        
     else: # Proceed to clustering and  save model if not yet done
 
         clustering_task=Columns2Clustering(X_train, X_valid, X_test)

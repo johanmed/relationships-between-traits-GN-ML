@@ -62,6 +62,7 @@ if os.path.exists(f'{best_model}_clustering/{best_model}_clustering_qtl.pkl'): #
     full_X_rec['clusters_qtl']=clusters_qtl # add cluster information to dataframe for QTL modeling
     full_X_rec['distances_qtl']=distances_qtl # add distance to closest centroid to dataframe for QTL modeling
 
+print(full_X_rec.iloc[:5,:])
 
 desc_X=pd.read_csv('../../../diabetes_gemma_association_data_plrt_filtered.csv', usecols=['full_desc'])
 
