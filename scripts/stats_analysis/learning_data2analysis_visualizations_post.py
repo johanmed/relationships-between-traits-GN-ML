@@ -9,7 +9,9 @@ This script is similar to script 20 except that only one instance of the trait i
 
 # 1. Read file and import training_validation_set
 
-f=open('../../../data_indices_learning_data.csv')
+type=input('Please enter the type of model you want to use for extraction of deep learning results: ')
+
+f=open(f'../../../data_indices_learning_data_{type}.csv')
 f_read=f.readlines()
 f.close()
 
@@ -101,9 +103,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-# According to distribution of distances_hits in original datasets, need to study association at distance level <= 5, <= 5.5, <= 6 and <= 6.5
-
-option_level = {1:5, 2:5.5, 3:6, 4:6.5} # define mapping between option and distance level
+type_option_levels = {'hits':{1:5, 2:5.5, 3:6, 4:6.5}, 'qtl':{1:12.8, 2:13, 3:13.2, 4:13.4, 5:13.6, 6:13.8}} # define mapping between type of model, options and distance thresholds
 
 
 def analyze_association(clust_trait_dist, level): # level set by default to the one saved
@@ -135,7 +135,7 @@ def analyze_association(clust_trait_dist, level): # level set by default to the 
     return results
 
 
-def plot_results(results, ax, level):
+def plot_results(results, ax, level, loc):
     
     """
     Plot number of hits found associated for each trait per cluster at a specified level on specified axis
@@ -145,13 +145,13 @@ def plot_results(results, ax, level):
     
     results_trans = results.transpose() # set traits to columns and clusters to indices instead
 
-    results_trans.plot.bar(ax=ax)
+    conts = results_trans.plot.bar(ax=ax)
 
     ax.set_ylabel('Number of hits', fontsize=15)
 
     ax.set_xlabel('Clusters', fontsize=15)
 
-    ax.legend(loc='upper center')
+    ax.legend(loc=loc)
     
     ax.set_title(f'Number of associated hits at distance threshold of {level}', fontsize=15)
 
@@ -159,24 +159,26 @@ def plot_results(results, ax, level):
     
 
 
+option_levels=type_option_levels[type]
 
-fig, axes = plt.subplots(4, 1, figsize=(20, 20)) # define subplots
+num_levels=len(option_levels.keys())
 
-fig.set_layout_engine('constrained')
+loc=input('Please enter the desired location where you want the legend to be placed: ')
 
-for (option, ax) in zip(option_level.keys(), axes): # repeat analysis and results plotting for each level
+fig, axes = plt.subplots(num_levels, 1, figsize=(20, 20), sharex=True) # define subplots
 
-    results = analyze_association(clust_trait_dist, option_level[option]) # analysis
+for (option, ax) in zip(option_levels.keys(), axes): # repeat analysis and results plotting for each level
+
+    results = analyze_association(clust_trait_dist, option_levels[option]) # analysis
     
-    plot_results(results, ax, option_level[option]) # plot results on specified axis
-
+    plot_results(results, ax, option_levels[option], loc=loc) # plot results on specified axis
 
 
 fig.suptitle('Number of associated hits at different thresholds', fontsize=20)
 
 plt.show()
 
-fig.savefig('../../output/Results_analysis_learning_data2.png', dpi=500)
+fig.savefig(f'../../output/Results_analysis_learning_data_{type}_v2.png', dpi=500)
 
 
 

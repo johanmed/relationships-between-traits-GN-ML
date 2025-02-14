@@ -73,10 +73,11 @@ def main():
 
     X_full_features = clustering_task.get_features() # get preprocessed features for the whole set
     
+    type=input('Please enter the type of model you want to use for extraction of deep learning results: ')
     
-    if os.path.exists('../clustering/deep_learning_clustering_hits/best_clustering_model_by_hits.keras'): # check first existence of best_clustering_model_by hits
+    if os.path.exists(f'../clustering/deep_learning_clustering_{type}/best_clustering_model_by_hits.keras'): # check first existence of best_clustering_model_by hits
         
-        best_model=tf.keras.models.load_model('../clustering/deep_learning_clustering_hits/best_clustering_model_by_hits.keras')
+        best_model=tf.keras.models.load_model(f'../clustering/deep_learning_clustering_{type}/best_clustering_model_by_hits.keras')
         
         prediction_clusters, prediction_distances = NewColumns2Clustering.predict_neural_clustering(best_model, X_full_features, NewColumns2Clustering.get_clusters_labels) # get predictions
         
@@ -85,11 +86,11 @@ def main():
             container.append([i, j, k[0]]) # save data index, cluster assigned and distance to centroid for each observation, because k is saved in array despite having only one element, need to index 
             
         to_save=pd.DataFrame(container) # convert to a dataframe
-        to_save.to_csv('../../../data_indices_learning_data.csv', index=False, header=False) # save as csv
+        to_save.to_csv(f'../../../data_indices_learning_data_{type}.csv', index=False, header=False) # save as csv
             
-    elif os.path.exists('../clustering/deep_learning_clustering_hits/best_checkpoint.keras'): # if fails, check existence of best_checkpoint
+    elif os.path.exists(f'../clustering/deep_learning_clustering_{type}/best_checkpoint.keras'): # if fails, check existence of best_checkpoint
         
-        best_model=tf.keras.models.load_model('../clustering/deep_learning_clustering_hits/best_checkpoint.keras')
+        best_model=tf.keras.models.load_model(f'../clustering/deep_learning_clustering_{type}/best_checkpoint.keras')
         
         prediction_clusters, prediction_distances = NewColumns2Clustering.predict_neural_clustering(best_model, X_full_features, NewColumns2Clustering.get_clusters_labels)
         
@@ -98,7 +99,7 @@ def main():
             container.append([i, j, k[0]]) # same
             
         to_save=pd.DataFrame(container)
-        to_save.to_csv('../../../data_indices_learning_data.csv', index=False, header=False)
+        to_save.to_csv(f'../../../data_indices_learning_data_{type}.csv', index=False, header=False)
     
     else: # handle gracefully when none of the above exists
     
