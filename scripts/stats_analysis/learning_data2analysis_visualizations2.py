@@ -1,0 +1,182 @@
+#!/usr/bin/env python
+
+"""
+Script 21
+
+This script is similar to script 20 except that only one instance of the trait is taken
+"""
+
+
+# 1. Read file and import training_validation_set
+
+f=open('../../../data_indices_learning_data.csv')
+f_read=f.readlines()
+f.close()
+
+from vector_data_post import training_validation_set
+
+
+
+# 2. Extract clusters and their elements
+
+clusters={}
+
+for line in f_read:
+
+    ind, clust, dist = line.split(',')
+    clust=int(clust)
+    dist=float(dist.strip('\n')) # remove and of line character from dist
+    
+    if clust in clusters.keys():
+        clusters[clust].append([ind, dist]) # add new element using its index and the distance to centroid
+    else:
+        clusters[clust]=[[ind, dist]] # store for each element of cluster the index and the distance to centroid
+        
+#print('The clusters and elements are: \n', clusters)
+
+
+
+# 3. Link index to trait
+
+import numpy as np
+import json
+import os
+
+traits={}
+seen=[]
+
+tv_data=np.array(training_validation_set) # convert to a numpy array
+
+len_processing=len(tv_data)
+
+for (index, line) in enumerate(tv_data):
+    len_processing -= 1
+    print(f'{len_processing} more to process')
+
+    chr_num, pos, p_lrt, clusters_hits, distances_hits, clusters_qtl, distances_qtl, trait = line
+        
+    if [chr_num, pos, trait] not in seen: # strategy to take care of duplicates
+    
+        traits[str(index)] = trait # store only trait as prediction of cluster and distance information are already available
+        
+        seen.append([chr_num, pos, trait]) # update seen
+
+
+#print('The indices and corresponding traits are: \n', traits)
+
+
+
+# 4. Use relationship between index and observation to get traits and predictions of distances
+
+clust_trait_dist={}
+
+
+for cluster in clusters.keys():
+
+    clust_trait_dist[cluster]=[] # register the cluster in clust_dist
+    
+    for ind, dist in clusters[cluster]:
+
+        if ind not in traits.keys():
+            continue
+            
+        else:
+        
+            trait = traits[str(ind)]
+            words = trait.split(' ') # process trait name
+            new_trait = ' '.join(words[:3]) # select only the 4 first words in trait name
+        
+            clust_trait_dist[cluster].append([new_trait, dist]) # append the trait for the GWAS hit and the distance to the centroid
+        
+            
+#print('The clusters and corresponding trait hits with distance to centroid are: \n', clust_trait_dist)
+
+
+
+
+# 5. Extract traits for which hits associated at a given distance from the centroid, compute number of hits and plot results
+
+from collections import Counter
+import matplotlib.pyplot as plt
+import pandas as pd
+
+
+# According to distribution of distances_hits in original datasets, need to study association at distance level <= 5, <= 5.5, <= 6 and <= 6.5
+
+option_level = {1:5, 2:5.5, 3:6, 4:6.5} # define mapping between option and distance level
+
+
+def analyze_association(clust_trait_dist, level): # level set by default to the one saved
+
+    """
+    Analyze association results at a specified level
+    The level represents the distance of the point to centroid used to defined association
+    Extract traits with hits found associated at the specified level
+    """
+    
+    results={}
+    
+    for cluster in clust_trait_dist.keys():
+        
+        assoc_trait_hits=[] # save trait of hits found associated
+        traits_distances = clust_trait_dist[cluster]
+        
+        for (trait, dist) in traits_distances:
+            
+            if dist <= level: # check if distance is inferior or equal to the level set
+                assoc_trait_hits.append(trait) # every occurence of trait appended represents a different hit
+        
+        assoc_trait_hits = sorted(assoc_trait_hits) # sort trait alphabetically to make plots more understandable
+        
+        freq_assoc_traits=Counter(assoc_trait_hits) # get number of hits for each trait
+        
+        results[cluster]=freq_assoc_traits
+        
+    return results
+
+
+def plot_results(results, ax, level):
+    
+    """
+    Plot number of hits found associated for each trait per cluster at a specified level on specified axis
+    """
+    
+    results=pd.DataFrame(results) # convert to dataframe where traits are indices and clusters columns
+    
+    results_trans = results.transpose() # set traits to columns and clusters to indices instead
+
+    results_trans.plot.bar(ax=ax)
+
+    ax.set_ylabel('Number of hits', fontsize=15)
+
+    ax.set_xlabel('Clusters', fontsize=15)
+
+    ax.legend(loc='upper center')
+    
+    ax.set_title(f'Number of associated hits at distance threshold of {level}', fontsize=15)
+
+    return ax
+    
+
+
+
+fig, axes = plt.subplots(4, 1, figsize=(20, 20)) # define subplots
+
+fig.set_layout_engine('constrained')
+
+for (option, ax) in zip(option_level.keys(), axes): # repeat analysis and results plotting for each level
+
+    results = analyze_association(clust_trait_dist, option_level[option]) # analysis
+    
+    plot_results(results, ax, option_level[option]) # plot results on specified axis
+
+
+
+fig.suptitle('Number of associated hits at different thresholds', fontsize=20)
+
+plt.show()
+
+fig.savefig('../../output/Results_analysis_learning_data2.png', dpi=500)
+
+
+
