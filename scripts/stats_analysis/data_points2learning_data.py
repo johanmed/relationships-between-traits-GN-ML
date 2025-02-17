@@ -5,7 +5,7 @@ Script 19
 
 This script uses best clustering model previously identified to predict data index, cluster assigned and distance to its centroid for the training set + validation set (whole dataset without test set)
 This will then further be analyzed
-Dependencies: vector_data_pre.py -> preprocessing_hits, vector_data_post.py -> training_validation_set
+Dependencies: vector_data_pre.py -> preprocessing_hits/preprocessing_qtl, vector_data_post.py -> training_validation_set
 """
 
 import os
@@ -15,15 +15,24 @@ from random import choice
 
 from vector_data_post import training_validation_set as processed_X # use concatenation of training and validation sets
 
-from vector_data_pre import preprocessing_hits # use transformation pipeline of the best clustering model found
+from vector_data_pre import preprocessing_hits, preprocessing_qtl # use transformation pipeline of the best clustering model found; need to consider the appropriate type of modeling for the run (hits or QTL)
 
-# Define features
+# Define preprocessing pipeline and features to use
 
-clusters_hits_full = processed_X['clusters_hits']
+type=input('Please enter the type of model you want to use for extraction of deep learning results: ')
+      
+if type=='hits':
+           
+    preprocessing = preprocessing_hits
+        
+    X_full=processed_X[['p_lrt', 'chr_num', 'pos']]
+        
+elif type=='qtl':
+            
+    preprocessing = preprocessing_qtl
+          
+    X_full=processed_X[['p_lrt', 'chr_num']]
 
-distances_hits_full = processed_X['distances_hits']
-
-X_full=processed_X[['p_lrt', 'chr_num', 'pos']]
 
 
 class NewColumns2Clustering:
@@ -37,9 +46,10 @@ class NewColumns2Clustering:
 
     def get_features(self):
         """
-        Extract 2 PCA from preprocessing_hits pipeline
+        Extract 2 PCA from transformation pipeline
         """
-        return preprocessing_hits.fit_transform(self.data)
+        
+        return preprocessing.fit_transform(self.data)
         
     def get_clusters_labels(raw_predictions_proba):
     
@@ -75,9 +85,9 @@ def main():
     
     type=input('Please enter the type of model you want to use for extraction of deep learning results: ')
     
-    if os.path.exists(f'../clustering/deep_learning_clustering_{type}/best_clustering_model_by_hits.keras'): # check first existence of best_clustering_model_by hits
+    if os.path.exists(f'../clustering/deep_learning_clustering_{type}/best_clustering_model_by_{type}.keras'): # check first existence of best_clustering_model_by hits
         
-        best_model=tf.keras.models.load_model(f'../clustering/deep_learning_clustering_{type}/best_clustering_model_by_hits.keras')
+        best_model=tf.keras.models.load_model(f'../clustering/deep_learning_clustering_{type}/best_clustering_model_by_{type}.keras')
         
         prediction_clusters, prediction_distances = NewColumns2Clustering.predict_neural_clustering(best_model, X_full_features, NewColumns2Clustering.get_clusters_labels) # get predictions
         
