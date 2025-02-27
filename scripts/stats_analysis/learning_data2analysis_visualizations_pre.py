@@ -191,7 +191,9 @@ for (option, ax) in zip(option_levels.keys(), axes): # repeat analysis and resul
         
         to_write = ''
         
-        for trait in results.keys():
+        sel_cluster = results[1] # select a random cluster
+        
+        for trait in sel_cluster.keys():
             to_write = to_write + trait + ","
             
         file.write(to_write)
