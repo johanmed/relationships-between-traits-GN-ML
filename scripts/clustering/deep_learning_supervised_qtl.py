@@ -151,13 +151,17 @@ class Columns2Clustering:
         """
         dic={} # Get numeric values for desc that can be used for color
         
+        start=0
+        
         for ind, trait in enumerate(desc):
+            trait = ' '.join(trait.split(' ')[:2]) # select only first 2 words of description, do away of dataset name for simplicity, as long as description is the same, consider the same
             if trait in dic.keys():
                 continue
             else:
-                dic[trait] = ind # create numeric values for colors
+                dic[trait] = start # associate numeric values to colors
+                start += 1
         
-        labels=[dic[trait] for trait in desc]
+        labels=[dic[' '.join(trait.split(' ')[:2])] for trait in desc] # apply previous formatting to trait to get corresponding value
         
         unique_labels = list(dic.values())
         unique_names = list(dic.keys())
@@ -168,7 +172,7 @@ class Columns2Clustering:
     
         for ind, label in enumerate(unique_labels):
             mask = np.array(labels) == label
-            plt.scatter(X[mask, 0], X[mask, 1], c=colors[ind], label=f'Trait {unique_names[ind][:40]}', alpha=0.7, edgecolors='black', linewidth=0.5)
+            plt.scatter(X[mask, 0], X[mask, 1], c=colors[ind], label=f'Trait {unique_names[ind][:50]}', alpha=0.7, edgecolors='black', linewidth=0.5)
         
         plt.xlabel("PC 1", fontsize=10)
         plt.ylabel("PC 2", fontsize=10, rotation=90)

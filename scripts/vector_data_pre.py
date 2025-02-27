@@ -117,7 +117,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 
-custom_preprocessing=Pipeline([('cluster', MiniBatchKMeans(n_clusters=5, random_state=2024, n_init=10)), ('standardize', StandardScaler()), ('reduce', PCA(n_components=2, random_state=2024))])
+custom_preprocessing=Pipeline([('standardize', StandardScaler()), ('reduce', PCA(n_components=2, random_state=2024))])
 
 preprocessing_hits=ColumnTransformer([('plrt_chr_num_pos', custom_preprocessing, ['p_lrt', 'chr_num', 'pos'])], remainder=StandardScaler())
 

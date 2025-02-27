@@ -41,11 +41,12 @@ for traits in order_read:
         if not (trait_found==None):
             trait_extract="".join(char for char in trait_found.string[9:] if char.isalnum())
             if trait_extract in traits:
+                dataset_name= "".join(char for char in info_read[ind+1][13:] if char.isalnum())
                 line_interest=info_read[ind+2]
                 for desc in line_interest.split(',"'):
                     description_found=re.search('description', desc)
                     if not (description_found==None):
-                        ordered_info_read.append(desc)# add only the description line
+                        ordered_info_read.append([desc, dataset_name])# add only the description line
                 
             
 #print('new metadata is: ', ordered_info_read)
@@ -54,11 +55,11 @@ for traits in order_read:
 
 metadata=[] # metadata of phenotypes will be added in the order of the phenotypes in the project_imputed_phenotype_file.bimbam offhand, so no need to sort
 
-for line in ordered_info_read:
-    description_found=re.search('description', line)
+for (desc, dataset) in ordered_info_read:
+    description_found=re.search('description', desc)
     description_extract= "".join(char for char in description_found.string[14:] if char.isalnum() or char==' ')
     #print('description extract is ', description_extract)
-    metadata.append(description_extract)
+    metadata.append(f'{description_extract} {dataset}')
     
 #print('final metadata is: ', metadata)
 

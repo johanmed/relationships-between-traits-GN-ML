@@ -67,6 +67,8 @@ class Columns2Clustering(ModellingKMeans):
         preprocessed_validation=preprocessing_hits.transform(self.validation)
         preprocessed_test=preprocessing_hits.transform(self.test)
         
+        print(preprocessed_training)
+        
         return preprocessed_training, preprocessed_validation, preprocessed_test
         
 

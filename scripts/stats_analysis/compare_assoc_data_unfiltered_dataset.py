@@ -27,6 +27,7 @@ def compare_info_trait(trait_pos):
         q_range = q75 - q25 # compute interquartile range
         for datum in data:
             if not (q25 - (1.5 * q_range) <= datum <= q75 + (1.5 * q_range)): # check if datum is an outlier
+                #print(data) # confirm outlier on printout
                 diff.append([loc, datum]) # add to diff if outlier
     return diff
     
@@ -149,20 +150,9 @@ results=analyze_traits(dup_traits, compare_info_trait) # look for outliers in hi
 print('The duplicated traits with dichotomy in association data are: ', results.keys())
 
 
-# 4. Plot pie chart of proportion of duplicated traits with problematic GWAS results
+# 4. Output summary of results
 
-import matplotlib.pyplot as plt
-from matplotlib.patches import ConnectionPatch
-import pandas as pd
-import numpy as np
-from collections import Counter
-
-np.random.seed(2024)
-
-fig, (ax1, ax2)=plt.subplots(1, 2, figsize=(20, 10))
-
-# pie chart parameters
-
+# Summarize
 data_total=[len(dup_traits), len(dict_data)-len(dup_traits)] # get number of duplicated_traits out of the total traits
 labels_total=['Traits with many occurences', 'Traits with only 1 occurence']
 
@@ -171,61 +161,19 @@ labels_dup = ['Traits with outliers for p-values hits', 'Traits with no outlier'
 
 gwas_data = [(trait, len(results[trait])) for trait in results.keys()]
 
+
+def display(data, labels):
+    # Format printout
+    for datum, label in zip(data, labels):
+        print(f'Number of {label}: {datum}')
+
+# Proceed to display
+
+display(data_total, labels_total)
+
+display(data_dup, labels_dup)
+
 for trait, num_loci in gwas_data:
     print(f'The trait {trait} has {num_loci} problematic loci')
 
 
-explode=(0.1, 0)
-
-
-ax1.pie(data_total, labels=labels_total, colors=['b', 'g'], autopct='%1.2f%%', explode=explode, startangle=-90, textprops={'fontsize':15}) # plot replicated traits out of all traits
-
-ax1.set_title('Replicated vs non-replicated traits', fontsize=20)
-
-ax2.pie(data_dup, labels=labels_dup, colors=['r', 'g'], autopct='%1.2f%%', explode=explode, startangle=35, textprops={'fontsize':15}) # plot traits with outliers in hits p-values out of the replicated/duplicated traits
-
-ax2.set_title('GWAS results comparison locus by locus of replicated traits', fontsize=20)
-
-
-fig.suptitle('Proportion of replicated traits with contradictory hits at the same locus', fontsize=25)
-
-plt.show()
-
-fig.savefig('../../output/Proportion_traits_with_contradictory_gwas_results.png', dpi=500)
-
-
-
-
-"""
-5. Plot vertical bar plot of proportion of differences for traits with contradictory gwas results
-
-def sort_second_el_len(seq):
-    return len(seq[1])
-
-sorted_results=sorted(results.items(), key=sort_second_el_len, reverse=True)
-
-top20_results=[pair[0] for pair in sorted_results[1:21] if type(pair[0])==str and len(pair[0]) >= 5] # omit nan
-
-#print(top20_results)
-
-freq_top20_results=[len(results[key]) for key in top20_results]
-
-top20_results = [' '.join(desc.split(' ')[1:6]) for desc in top20_results]
-
-
-
-fig, ax=plt.subplots(figsize=(20, 20))
-
-data=pd.DataFrame(freq_top20_results, index=top20_results) # use the number of differences in each trait to determine the width of each bar
-
-data.plot.barh(ax=ax, color='black', alpha=0.7, legend=False)
-
-ax.set_xlabel('Number of problematic loci', fontsize=15)
-
-ax.set_title('Number of problematic loci for the top 20 traits with contradictory results', fontsize=20)
-
-plt.show()
-
-fig.savefig('../../output/Number_problematic_loci_top20.png', dpi=500)
-
-"""

@@ -85,8 +85,13 @@ for cluster in clusters.keys():
         else:
         
             trait = traits[str(ind)]
-            words = trait.split(' ') # process trait name
-            new_trait = ' '.join(words[:3]) # select only the 4 first words in trait name
+            splitted= trait.split(' ')
+        
+            part1 = splitted[:-1]
+            new_part1 = ''.join(word[0].upper() for word in part1 if len(word)>=1)
+            part2 = splitted[-1]
+            
+            new_trait= new_part1 + ' ' + part2
         
             clust_trait_dist[cluster].append([new_trait, dist]) # append the trait for the GWAS hit and the distance to the centroid
         
@@ -101,12 +106,16 @@ for cluster in clusters.keys():
 from collections import Counter
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 
+type_option_levels = {'hits':{1:4, 2:5, 3:6, 4:7}, 'qtl':{1:9.0, 2:9.2, 3:9.4, 4:9.6, 5:9.8, 6:10.0}} # define mapping between type of model, options and distance thresholds
+ 
 
-type_option_levels = {'hits':{1:5, 2:5.5, 3:6, 4:6.5}, 'qtl':{1:12.8, 2:13, 3:13.2, 4:13.4, 5:13.6, 6:13.8}} # define mapping between type of model, options and distance thresholds
-
-
-def analyze_association(clust_trait_dist, level): # level set by default to the one saved
+def sort_second_el(seq): # utility function for sorting according to second element
+    return seq[1]
+            
+            
+def analyze_association(clust_trait_dist, level, sort_second_el): # level set by default to the one saved
 
     """
     Analyze association results at a specified level
@@ -126,16 +135,22 @@ def analyze_association(clust_trait_dist, level): # level set by default to the 
             if dist <= level: # check if distance is inferior or equal to the level set
                 assoc_trait_hits.append(trait) # every occurence of trait appended represents a different hit
         
-        assoc_trait_hits = sorted(assoc_trait_hits) # sort trait alphabetically to make plots more understandable
-        
         freq_assoc_traits=Counter(assoc_trait_hits) # get number of hits for each trait
         
-        results[cluster]=freq_assoc_traits
+        sorted_freq_assoc_traits=sorted(freq_assoc_traits.items(), key=sort_second_el, reverse=True)
+        
+        new_freq_assoc_traits={}
+        
+        for key, value in sorted_freq_assoc_traits:
+            new_freq_assoc_traits[key]=value
+            
+            
+        results[cluster]=new_freq_assoc_traits
         
     return results
 
 
-def plot_results(results, ax, level, loc):
+def plot_results(results, ax, level):
     
     """
     Plot number of hits found associated for each trait per cluster at a specified level on specified axis
@@ -145,34 +160,25 @@ def plot_results(results, ax, level, loc):
     
     results_trans = results.transpose() # set traits to columns and clusters to indices instead
 
-    conts = results_trans.plot.bar(ax=ax)
-
-    ax.set_ylabel('Number of hits', fontsize=15)
-
-    ax.set_xlabel('Clusters', fontsize=15)
-
-    ax.legend(loc=loc)
+    sns.heatmap(results_trans, ax=ax, cbar=True)
     
     ax.set_title(f'Number of associated hits at distance threshold of {level}', fontsize=15)
-
+    
     return ax
     
-
 
 option_levels=type_option_levels[type]
 
 num_levels=len(option_levels.keys())
 
-loc=input('Please enter the desired location where you want the legend to be placed: ')
-
 fig, axes = plt.subplots(num_levels, 1, figsize=(20, 20), sharex=True) # define subplots
 
 for (option, ax) in zip(option_levels.keys(), axes): # repeat analysis and results plotting for each level
 
-    results = analyze_association(clust_trait_dist, option_levels[option]) # analysis
+    results = analyze_association(clust_trait_dist, option_levels[option], sort_second_el) # analysis
     
-    plot_results(results, ax, option_levels[option], loc=loc) # plot results on specified axis
-
+    plot_results(results, ax, option_levels[option]) # plot results on specified axis
+    
 
 fig.suptitle('Number of associated hits at different thresholds', fontsize=20)
 
