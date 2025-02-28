@@ -4,8 +4,6 @@ Script 23
 
 This script plots GWAS Manhattan of associated/correlated traits for visual confirmation
 
-It can also mimic QTL plots by drawing peaks on GWAS plots, provided the trait is quantitative
-
 Inputs:
 - selected data: ../../../diabetes_gemma_association_data_plrt_filtered_traits_selected.csv
 
@@ -28,8 +26,10 @@ warnings.filterwarnings("ignore")
 debug_flag = False
 
 
-def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled, bin_size):
-
+def draw_manhattan_plot(df, draw_peak, threshold_value):
+    
+    # Define cpos using to chr and pos sorting
+    
     df.chr = df.chr.astype('category')
     category_order = df.chr.unique()
     df.chr = df.chr.cat.set_categories(category_order, ordered=True)
@@ -42,21 +42,28 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled, bin_si
         
     df['cpos'] = pd.concat(cpos)
     
+    # Define layout
+    
     sns.set_theme()
     sns.set_style(rc = {'axes.facecolor': "#eeeeee", 'grid.color': "#f0f0f0"})
     palette_col = ['#0173b2', '#de8f05', '#029e73', '#d55e00', '#cc78bc', '#ca9161', '#56b4e9', '#949494']
     
+    # Plot relational plot
+    
     manhattan_plot = sns.relplot(
         data=df,
         alpha=0.7,
-        x='pos',
+        x='cpos',
         y='-logP',
         hue='full_desc',
-        palette=manhattan_palette,
+        palette=palette_col,
         linewidth=0,
-        legend=None
+        legend='auto'
        )
-       
+    
+    # Make extra layout configurations
+    
+    manhattan_plot.figure.set_size_inches(20, 20)
     manhattan_plot.ax.set_ylim(-0.05, None)
     manhattan_plot.ax.set_ylabel('-log P', rotation=0, labelpad=24)
     cpos_spacing = (df.groupby('chr', observed=False)['cpos'].max()).iloc[0]
@@ -88,22 +95,32 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled, bin_si
     
     plt.subplots_adjust(bottom=0.1, left=0.1, top=0.95, right=0.9)
     
+    # Draw peak line if asked
     if draw_peak:
         maxlp = df.loc[df['-logP'].idxmax()]
         manhattan_plot.ax.axvline(x=maxlp['cpos'],
                                   color=sns.color_palette('deep')[3],
                                   linestyle='dashed',
                                   linewidth=1)
+    # Draw threshold line if asked
     if threshold_value:
         manhattan_plot.ax.axhline(y=threshold_value,
                                   color=sns.color_palette('deep')[3],
                                   linestyle='dashed',
                                   linewidth=1)
-   
-    plt.show()
+                                  
+    plt.legend(loc='upper right')
+    manhattan_plot._legend.remove()
+    
+    manhattan_plot.figure.suptitle('Overlapping GWAS plots for selection of traits', fontsize=20)
+    
+    plt.savefig('../../output/Overlapping_GWAS_plots_selection_traits', dpi=500)
 
 
-
+def parse_csv_file(file):
+    # Manage parsing of csv file
+    df = pd.read_csv(file, sep=',', header=0)
+    return df
 
 
 
@@ -121,33 +138,20 @@ if __name__ == "__main__":
                         type=float,
                         help='Draw a threshold line at a given -logP value')
                         
-    parser.add_argument('--hover',
-                        help='Show details of the point that the cursor is hovering on',
-                        action='store_true')
-                        
     parser.add_argument('-d', '--debug', action='store_true', help='Enable debugging', default=False)
     
-    parser.add_argument('--trait', default=None, nargs='?', type=str, help='Trait name for AraQTL file')
-    
-    parser.add_argument('--chromosome', default=None, nargs='?', type=str, help='Selected chromosome')
-    
-    parser.add_argument('--bin-size', default=100000, nargs='?', type=int, help='Bin size for SNP density')
-
 
     args = parser.parse_args()
+    
     _, file_extension = os.path.splitext(args.file)
+    
     if file_extension.lower() == '.csv':
         data = parse_csv_file(args.file)
     else:
         print(f"Unsupported file extension: {file_extension}. Please provide a CSV file.")
         exit(1)
+        
     debug_flag = args.debug
     
-    if args.chromosome:
-        data = data[data["chr"] == args.chromosome]
-        if debug_flag:
-            print("Succeeded in picking chromosome!")
-            
     
-    
-    draw_manhattan_plot(data, args.peak, args.threshold, args.hover, args.bin_size)
+    draw_manhattan_plot(data, args.peak, args.threshold) # proceed to drawing
