@@ -71,6 +71,16 @@ if __name__ == '__main__':
     
     new_data['-logP']=logps
     
-    new_data['chr']=new_data['chr_num'] # column for chromosome number with the right name
+    
+    
+    ori_chr=list(new_data['chr_num'])
+    trans_chr=[]
+    
+    for num in ori_chr:
+        if num == 88: # encode chromosome 88 back to X
+            num='X'
+        trans_chr.append(num)
+        
+    new_data['chr']=trans_chr # add column for chromosome number with the right name
     
     new_data.to_csv('../../../diabetes_gemma_association_data_plrt_filtered_traits_selected.csv', index=False)
