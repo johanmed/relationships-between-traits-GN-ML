@@ -67,12 +67,43 @@ if __name__ == '__main__':
     new_data = extract_data(args.file, 'full_desc', full_traits)
     
     
+    # Compute -logP
+    
     pvals = list(new_data['p_lrt'])
     
-    logps = [-log(p) for p in pvals] # compute -logP
+    logps = [-log(p) for p in pvals] 
     
     new_data['-logP']=logps
     
+    
+    # Add marker's names
+    
+    file_markers = open('../../processed_data/BXD_snps.txt')
+    markers_info = file_markers.readlines()
+    file_markers.close()
+    
+    markers_dict={}
+    
+    for line in markers_info:
+        marker, pos, chromo = line.split('\t')    
+        chromo=chromo.strip('\n')
+        if chromo=='X':
+            markers_dict[(ord(chromo), int(pos))] = marker
+        else:
+            markers_dict[(int(chromo), int(pos))] = marker
+    
+    final_markers=[]
+    
+    for ind in new_data.index:
+        row = new_data.loc[ind]
+        chromo = row['chr_num']
+        pos = row['pos']
+        final_markers.append(markers_dict[(chromo, pos)])
+    
+    new_data['marker'] = final_markers
+    
+    
+    # Add column for chromosome number with the right name
     
     ori_chr=list(new_data['chr_num'])
     
@@ -83,6 +114,8 @@ if __name__ == '__main__':
             num='X'
         trans_chr.append(num)
         
-    new_data['chr']=trans_chr # add column for chromosome number with the right name
+    new_data['chr']=trans_chr 
+    
+    
     
     new_data.to_csv('../../../diabetes_gemma_association_data_plrt_filtered_traits_selected.csv', index=False)

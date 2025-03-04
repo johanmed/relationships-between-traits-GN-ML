@@ -18,6 +18,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import textalloc as ta
 
 # To suppress the palette warning
 import warnings
@@ -26,7 +27,7 @@ warnings.filterwarnings("ignore")
 debug_flag = False
 
 
-def draw_manhattan_plot(df, draw_peak, threshold_value):
+def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled):
     
     # Define cpos using to chr and pos sorting
     
@@ -109,17 +110,130 @@ def draw_manhattan_plot(df, draw_peak, threshold_value):
                                   linestyle='dashed',
                                   linewidth=1)
                                   
+    
+    
+    text_list = []
+    x_list = []
+    y_list = []
+    skip_lines = (not not threshold_value) + (not not draw_peak)
+    def clear_points_and_lines():
+        for line_idx, line in enumerate(plt.gca().lines):
+            if line_idx < skip_lines:
+                if debug_flag:
+                    print("Skipped a line")
+                continue
+            line.remove()
+        for text in manhattan_plot.ax.texts:
+            if text != hover_annot:
+                text.remove()
+    
+    
+    def on_click(event):
+        if event.button == 3 and hovering_enabled:
+            create_or_destroy_hover_annot()
+            manhattan_plot.fig.canvas.draw_idle()
+            return
+        if event.inaxes is not None:
+            x, y = event.xdata, event.ydata
+            if debug_flag:
+                print(x, y)
+            closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['-logP'] - y)/df['-logP'])**2).idxmin()
+            marker_attribute = df.loc[closest_point_index, 'marker']
+            x_attribute = df.loc[closest_point_index, 'cpos']
+            y_attribute = df.loc[closest_point_index, '-logP']
+            if debug_flag:
+                print(x_attribute, y_attribute)
+                print(f"Clicked on point with marker attribute: {marker_attribute}")
+            if marker_attribute not in text_list:
+                if debug_flag:
+                    print("New attribute!")
+                text_list.append(marker_attribute)
+                x_list.append(x_attribute)
+                y_list.append(y_attribute)
+            else:
+                if debug_flag:
+                    print("Existing attribute: deleting!")
+                idx = text_list.index(marker_attribute)
+                deleted_flag = False
+                for text_obj in manhattan_plot.ax.texts:
+                    if text_obj.get_text() == marker_attribute:
+                        text_obj.remove()
+                        if debug_flag:
+                            print("Found the text object!")
+                        deleted_flag = True
+                        break
+                if not deleted_flag:
+                    print("ERROR: Deleted Flag not satisfied for point!")
+                else:
+                    deleted_flag = False
+                text_list.pop(idx)
+                x_list.pop(idx)
+                y_list.pop(idx)
+            clear_points_and_lines()
+            ta.allocate_text(fig=manhattan_plot.figure,
+                                         ax=manhattan_plot.ax,
+                                         x=x_list,
+                                         y=y_list,
+                                         text_list=text_list,
+                                         linecolor=[sns.color_palette('deep')[3]]*len(x_list),
+                                         textsize=12)
+            plt.draw()
+    hover_annot = manhattan_plot.ax.annotate("", xy=(0, 0), xytext=(20, 20),
+                                             textcoords="offset points",
+                                             bbox=dict(boxstyle="round",
+                                                       fc=(0.94, 0.95, 0.9)),
+                                             arrowprops=dict(arrowstyle="->",
+                                                             color="b"))
+    if not hovering_enabled:
+        hover_annot.set_visible(False)
+    def create_or_destroy_hover_annot():
+        nonlocal hover_annot
+        if hover_annot.get_visible():
+            hover_annot.set_visible(False)
+        else:
+            hover_annot.set_visible(True)
+    def update_hover_annot(event):
+        x, y = event.xdata, event.ydata
+        if debug_flag:
+            print(x, y)
+        closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['-logP'] - y)/df['-logP'])**2).idxmin()
+        marker_attribute = df.loc[closest_point_index, 'marker']
+        x_attribute = df.loc[closest_point_index, 'cpos']
+        y_attribute = df.loc[closest_point_index, '-logP']
+        txt = "Pos: "+str(x_attribute)+", -logP: "+str(y_attribute)+": "+marker_attribute
+        hover_annot.set_text(txt)
+        hover_annot.xy = (x_attribute, y_attribute)
+        hover_annot.get_bbox_patch().set_alpha(0.4)
+
+    def on_hover(event):
+        if not hover_annot.get_visible():
+            return
+        update_hover_annot(event)
+        manhattan_plot.fig.canvas.draw_idle()
+
+    plt.gcf().canvas.mpl_connect('button_press_event', on_click)
+    if hovering_enabled:
+        plt.gcf().canvas.mpl_connect('motion_notify_event', on_hover)
+    
+    
+    
+    
     plt.legend(loc='upper right')
     manhattan_plot._legend.remove()
     
     manhattan_plot.figure.suptitle('Overlapping GWAS plots for selection of traits', fontsize=20)
     
-    plt.savefig('../../output/Overlapping_GWAS_plots_selection_traits', dpi=500)
+    plt.show()
+    
+    #plt.savefig('../../output/Overlapping_GWAS_plots_selection_traits', dpi=500)
 
 
 
 
-def draw_qtl_plot(df, draw_peak, threshold_value):
+
+
+
+def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled):
     
     # Define cpos using to chr and pos sorting
     
@@ -207,13 +321,128 @@ def draw_qtl_plot(df, draw_peak, threshold_value):
                                   color=sns.color_palette('deep')[3],
                                   linestyle='dashed',
                                   linewidth=1)
-                                  
+    
+    
+    
+    text_list = []
+    x_list = []
+    y_list = []
+    # As this is a line plot, we need to skip one line each for each chromosome!
+    skip_lines = (not not threshold_value) + (not not draw_peak) + len(df.chr.unique())
+    if debug_flag:
+        print("Skipping", skip_lines, "lines.")
+    def clear_points_and_lines():
+        for line_idx, line in enumerate(plt.gca().lines):
+            if line_idx < skip_lines:
+                if debug_flag:
+                    print("Skipped a line")
+                continue
+            line.remove()
+        for text in qtl_plot.ax.texts:
+            if text != hover_annot:
+                text.remove()
+    
+    
+    
+    def on_click(event):
+        if event.button == 3 and hovering_enabled:
+            create_or_destroy_hover_annot()
+            qtl_plot.fig.canvas.draw_idle()
+            return
+        if event.inaxes is not None:
+            x, y = event.xdata, event.ydata
+            if debug_flag:
+                print(x, y)
+            closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['-logP'] - y)/df['-logP'])**2).idxmin()
+            marker_attribute = df.loc[closest_point_index, 'marker']
+            x_attribute = df.loc[closest_point_index, 'cpos']
+            y_attribute = df.loc[closest_point_index, '-logP']
+            if debug_flag:
+                print(x_attribute, y_attribute)
+                print(f"Clicked on point with marker attribute: {marker_attribute}")
+            if marker_attribute not in text_list:
+                if debug_flag:
+                    print("New attribute!")
+                text_list.append(marker_attribute)
+                x_list.append(x_attribute)
+                y_list.append(y_attribute)
+            else:
+                if debug_flag:
+                    print("Existing attribute: deleting!")
+                idx = text_list.index(marker_attribute)
+                deleted_flag = False
+                for text_obj in qtl_plot.ax.texts:
+                    if text_obj.get_text() == marker_attribute:
+                        text_obj.remove()
+                        if debug_flag:
+                            print("Found the text object!")
+                        deleted_flag = True
+                        break
+                if not deleted_flag:
+                    print("ERROR: Deleted Flag not satisfied for point!")
+                else:
+                    deleted_flag = False
+                text_list.pop(idx)
+                x_list.pop(idx)
+                y_list.pop(idx)
+            clear_points_and_lines()
+            ta.allocate_text(fig=qtl_plot.figure,
+                                         ax=qtl_plot.ax,
+                                         x=x_list,
+                                         y=y_list,
+                                         text_list=text_list,
+                                         linecolor=[sns.color_palette('deep')[3]]*len(x_list),
+                                         textsize=12)
+            plt.draw()
+    hover_annot = qtl_plot.ax.annotate("", xy=(0, 0), xytext=(20, 20),
+                                             textcoords="offset points",
+                                             bbox=dict(boxstyle="round",
+                                                       fc=(0.94, 0.95, 0.9)),
+                                             arrowprops=dict(arrowstyle="->",
+                                                             color="b"))
+    if not hovering_enabled:
+        hover_annot.set_visible(False)
+    def create_or_destroy_hover_annot():
+        nonlocal hover_annot
+        if hover_annot.get_visible():
+            hover_annot.set_visible(False)
+        else:
+            hover_annot.set_visible(True)
+    def update_hover_annot(event):
+        x, y = event.xdata, event.ydata
+        if debug_flag:
+            print(x, y)
+        closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['LOD'] - y)/df['LOD'])**2).idxmin()
+        marker_attribute = df.loc[closest_point_index, 'marker']
+        x_attribute = df.loc[closest_point_index, 'cpos']
+        y_attribute = df.loc[closest_point_index, 'LOD']
+        txt = "Pos: "+str(x_attribute)+", LOD: "+str(y_attribute)+": "+marker_attribute
+        hover_annot.set_text(txt)
+        hover_annot.xy = (x_attribute, y_attribute)
+        hover_annot.get_bbox_patch().set_alpha(0.4)
+
+    def on_hover(event):
+        if not hover_annot.get_visible():
+            return
+        update_hover_annot(event)
+        qtl_plot.fig.canvas.draw_idle()
+
+    plt.gcf().canvas.mpl_connect('button_press_event', on_click)
+    if hovering_enabled:
+        plt.gcf().canvas.mpl_connect('motion_notify_event', on_hover)
+    
+    
+    
+    
+    
     plt.legend(loc='upper right')
     qtl_plot._legend.remove()
     
     qtl_plot.figure.suptitle('Overlapping QTL plots for selection of traits', fontsize=20)
     
-    plt.savefig('../../output/Overlapping_QTL_plots_selection_traits', dpi=500)
+    plt.show()
+    
+    #plt.savefig('../../output/Overlapping_QTL_plots_selection_traits', dpi=500)
     
     
     
@@ -243,6 +472,8 @@ if __name__ == "__main__":
     
     parser.add_argument('--type', type=str, default='gwas', help='Specify the type of plot to draw')
     
+    parser.add_argument('--hover', help='Show details of the point that the cursor is hovering on', action='store_true')
+    
 
     args = parser.parse_args()
     
@@ -259,7 +490,7 @@ if __name__ == "__main__":
     
     # Proceed to drawing
     if args.type=='gwas':
-        draw_manhattan_plot(data, args.peak, args.threshold) 
+        draw_manhattan_plot(data, args.peak, args.threshold, args.hover) 
         
     elif args.type=='qtl':
-        draw_qtl_plot(data, args.peak, args.threshold)
+        draw_qtl_plot(data, args.peak, args.threshold, args.hover)
