@@ -5,8 +5,10 @@ Script 22
 
 This script takes:
 - filtered dataset: ../../../diabetes_gemma_association_data_plrt_filtered.csv
-- trait list: ../../processed_data/priori_list_traits.csv
-- integers specifying position of traits of interest from command line; when not provided, '5,6' is the default used
+- trait-initials specifying traits
+- dataset-initials specifying datasets
+
+Can get hints for initials in file ../../processed_data/priori_list_traits.csv
 
 It returns the lines of the dataset where any trait in the list is present and saves in a csv file
 
@@ -26,9 +28,10 @@ def extract_data(data_file, column_name, traits):
     
     for trait in traits:
         dataset_name = trait.split(' ')[-1]
-        initial = trait.split(' ')[0][0].lower()
+        initial_ori = trait.split(' ')[0][0]
+        initial_pro = trait.split(' ')[0][0].lower()
         
-        indices=[(dataset_name in desc) and (initial == desc[0]) for desc in list(data[column_name])] # select lines related to traits of interest based on appearance of both dataset name and initial in trait desc
+        indices=[(dataset_name in desc) and (initial_ori == desc[0] or initial_pro == desc[0]) for desc in list(data[column_name])] # select lines related to traits of interest based on appearance of both dataset name and initial in trait desc
         cont.append(data[indices])
 
     return pd.concat(cont) # return only one general dataframe
@@ -40,30 +43,29 @@ if __name__ == '__main__':
     
     parser.add_argument('file', type=str, help='Path to the dataset file to process')    
     
-    parser.add_argument('--traitfile', type=str, help='Path to trait list file')
+    parser.add_argument('--tinitials', type=str, help='Commma separated strings of trait initials to look for in dataset')
     
-    parser.add_argument('--ids', type=str, default='5,6', help='Commma separated strings of trait index to look for in dataset') # file generated using defaults trait ids
+    parser.add_argument('--dinitials', type=str, help='Commma separated strings of dataset initials to look for in dataset')
+    
     
     args = parser.parse_args()
     
-    # Get traits names
+    # Get full traits names
     
-    priori_traits=open(args.traitfile)
-    trait_lists=priori_traits.read().split(',')
-    priori_traits.close()
-
-    mapping = {}
-
-    for ind, val in enumerate(trait_lists):
-        mapping[ind]=val # create mapping index to trait desc
+    trait_initials=args.tinitials.split(',')
+    
+    dataset_initials = args.dinitials.split(',')
+    
+    full_traits = []
+    
+    for trait, dataset in zip(trait_initials, dataset_initials):
+        full_traits.append(f'{trait} {dataset}')
+        
+    #print('Names of traits selected are: ', full_traits)
     
     
-    ids=args.ids.split(',')
+    new_data = extract_data(args.file, 'full_desc', full_traits)
     
-    traits=[mapping[int(ind)] for ind in ids] # get trait desc corresponding to index provided
-    #print('Names of traits selected are: ', traits)
-    
-    new_data = extract_data(args.file, 'full_desc', traits)
     
     pvals = list(new_data['p_lrt'])
     
@@ -72,8 +74,8 @@ if __name__ == '__main__':
     new_data['-logP']=logps
     
     
-    
     ori_chr=list(new_data['chr_num'])
+    
     trans_chr=[]
     
     for num in ori_chr:
