@@ -4,6 +4,10 @@
 Script 21
 
 This script is similar to script 20 except that only one instance of the trait is taken
+
+Duplicates removed
+
+Output: top 50 traits with more hits in the cluster
 """
 
 
@@ -88,11 +92,11 @@ for cluster in clusters.keys():
             splitted= trait.split(' ')
         
             part1 = splitted[:-1]
-            new_part1 = ''.join(word[0].upper() for word in part1 if len(word)>=1)
-            part2 = splitted[-1]
-            
-            new_trait= new_part1 + ' ' + part2
+            new_part1 = ''.join(word[0].upper() for word in part1 if len(word)>=1) # build trait initials
+            part2 = splitted[-1] # get dataset name
         
+            new_trait= part2 + ' ' + new_part1 # new naming
+            
             clust_trait_dist[cluster].append([new_trait, dist]) # append the trait for the GWAS hit and the distance to the centroid
         
             
@@ -147,7 +151,10 @@ def analyze_association(clust_trait_dist, level, sort_second_el): # level set by
             
         results[cluster]=new_freq_assoc_traits
         
-    return results
+        results=pd.DataFrame(results) # convert to dataframe where traits are indices and clusters columns
+        
+    return results.iloc[:50, :] # select first 50 traits
+
 
 
 def plot_results(results, ax, level):
@@ -156,13 +163,11 @@ def plot_results(results, ax, level):
     Plot number of hits found associated for each trait per cluster at a specified level on specified axis
     """
     
-    results=pd.DataFrame(results) # convert to dataframe where traits are indices and clusters columns
-    
     results_trans = results.transpose() # set traits to columns and clusters to indices instead
 
-    sns.heatmap(results_trans, ax=ax, cbar=True)
+    sns.heatmap(results_trans, ax=ax, cbar=True, cmap='YlGnBu', xticklabels=True)
     
-    ax.set_title(f'Number of associated hits at distance threshold of {level}', fontsize=15)
+    ax.set_title(f'Number of correlated hits at distance threshold of {level}', fontsize=15)
     
     return ax
     
@@ -180,7 +185,7 @@ for (option, ax) in zip(option_levels.keys(), axes): # repeat analysis and resul
     plot_results(results, ax, option_levels[option]) # plot results on specified axis
     
 
-fig.suptitle('Number of associated hits at different thresholds', fontsize=20)
+fig.suptitle('Number of correlated hits for top 50 traits', fontsize=20)
 
 plt.show()
 

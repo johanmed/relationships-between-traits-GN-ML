@@ -7,9 +7,11 @@ This script links association data to predictions of cluster and centroid distan
 
 For generalization of the method, predictions are used instead of clusters and centroid distances already in the dataset
 
-Select hits found associated at a given distance level
+Select hits found correlated at a given distance level
 
-Compute number of hits found associated for each trait per cluster
+Compute number of hits found correlated for each trait per cluster
+
+Output: top 50 traits with more hits in the cluster
 
 Dependencies: 
 vector_data_post.py -> training_validation_set
@@ -88,10 +90,10 @@ for cluster in clusters.keys():
         splitted= trait.split(' ')
         
         part1 = splitted[:-1]
-        new_part1 = ''.join(word[0].upper() for word in part1 if len(word)>=1)
-        part2 = splitted[-1]
+        new_part1 = ''.join(word[0].upper() for word in part1 if len(word)>=1) # build trait initials
+        part2 = splitted[-1] # get dataset name
         
-        new_trait= new_part1 + ' ' + part2
+        new_trait= part2 + ' ' + new_part1 # new naming
         
         clust_trait_dist[cluster].append([new_trait, dist]) # append the trait for the GWAS hit and the distance to the centroid
         
@@ -153,7 +155,9 @@ def analyze_association(clust_trait_dist, level, sort_second_el): # level set by
             
         results[cluster]=new_freq_assoc_traits
         
-    return results
+        results=pd.DataFrame(results) # convert to dataframe where traits are indices and clusters columns
+        
+    return results.iloc[:50, :] # select first 50 traits
 
 
 def plot_results(results, ax, level):
@@ -162,13 +166,11 @@ def plot_results(results, ax, level):
     Plot number of hits found associated for each trait per cluster at a specified level on specified axis
     """
     
-    results=pd.DataFrame(results) # convert to dataframe where traits are indices and clusters columns
-    
     results_trans = results.transpose() # set traits to columns and clusters to indices instead
-
-    sns.heatmap(results_trans, ax=ax, cbar=True)
     
-    ax.set_title(f'Number of associated hits at distance threshold of {level}', fontsize=15)
+    sns.heatmap(results_trans, ax=ax, cbar=True, cmap='YlGnBu', xticklabels=True)
+    
+    ax.set_title(f'Number of correlated hits at distance threshold of {level}', fontsize=15)
     
     return ax
     
@@ -191,9 +193,9 @@ for (option, ax) in zip(option_levels.keys(), axes): # repeat analysis and resul
         
         to_write = ''
         
-        sel_cluster = results[1] # select a random cluster
+        traits = results.index
         
-        for trait in sel_cluster.keys():
+        for trait in traits:
             to_write = to_write + trait + ","
             
         file.write(to_write)
@@ -201,7 +203,7 @@ for (option, ax) in zip(option_levels.keys(), axes): # repeat analysis and resul
     plot_results(results, ax, option_levels[option]) # plot results on specified axis
     
 
-fig.suptitle('Number of associated hits at different thresholds', fontsize=20)
+fig.suptitle('Number of correlated hits for top 50 traits', fontsize=20)
 
 plt.show()
 
