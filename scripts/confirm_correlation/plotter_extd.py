@@ -4,9 +4,7 @@ Script 23
 
 This script GWAS or QTL plots of associated/correlated traits for visual confirmation
 
-Inputs:
-- selected data: ../../../diabetes_gemma_association_data_plrt_filtered_traits_selected.csv
-
+Input -> selected data: (eg)../../../diabetes_gemma_association_data_plrt_filtered_selected/
 
 Adapted from plotter. Source code can be found at https://github.com/matchcase/plotter/blob/master/plot.py
 
@@ -19,7 +17,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import textalloc as ta
-from sklearn.neighbors import NearestNeighbors
 
 # To suppress the palette warning
 import warnings
@@ -116,7 +113,9 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled):
     text_list = []
     x_list = []
     y_list = []
+        
     skip_lines = (not not threshold_value) + (not not draw_peak)
+    
     def clear_points_and_lines():
         for line_idx, line in enumerate(plt.gca().lines):
             if line_idx < skip_lines:
@@ -140,17 +139,9 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled):
             if debug_flag:
                 print(x, y)
                 
-            data = df[['cpos', '-logP']].values
-            point = np.array([x, y])
+            closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['-logP'] - y)/df['-logP'])**2).idxmin()
             
-            neigh=NearestNeighbors(n_neighbors=1, algorithm='auto')
-            neigh.fit(data)
-            
-            dist, ind = neigh.kneighbors(point)
-            
-            closest_point_index = ind[0][0]
-            
-            marker_attribute = df.loc[closest_point_index, 'marker']
+            marker_attribute = df.loc[closest_point_index, 'cpos']
             x_attribute = df.loc[closest_point_index, 'cpos']
             y_attribute = df.loc[closest_point_index, '-logP']
             if debug_flag:
@@ -208,8 +199,10 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled):
         x, y = event.xdata, event.ydata
         if debug_flag:
             print(x, y)
+        
         closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['-logP'] - y)/df['-logP'])**2).idxmin()
-        marker_attribute = df.loc[closest_point_index, 'marker']
+              
+        marker_attribute = df.loc[closest_point_index, 'cpos']
         x_attribute = df.loc[closest_point_index, 'cpos']
         y_attribute = df.loc[closest_point_index, '-logP']
         txt = "Pos: "+ str(x_attribute) + ", -logP: " + str(y_attribute) + ": "+ marker_attribute
@@ -235,9 +228,9 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled):
     
     manhattan_plot.figure.suptitle('Overlapping GWAS plots for selection of traits', fontsize=20)
     
-    plt.show()
+    plt.show() # need to uncomment to be able to display and add marker annotation
     
-    #plt.savefig('../../output/Overlapping_GWAS_plots_selection_traits', dpi=500)
+    manhattan_plot.figure.savefig('../../output/Overlapping_GWAS_plots_selection_traits', dpi=500)
 
 
 
@@ -339,8 +332,9 @@ def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled):
     text_list = []
     x_list = []
     y_list = []
-    # As this is a line plot, we need to skip one line each for each chromosome!
+
     skip_lines = (not not threshold_value) + (not not draw_peak) + len(df.chr.unique())
+    
     if debug_flag:
         print("Skipping", skip_lines, "lines.")
     def clear_points_and_lines():
@@ -366,7 +360,7 @@ def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled):
             if debug_flag:
                 print(x, y)
             closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['-logP'] - y)/df['-logP'])**2).idxmin()
-            marker_attribute = df.loc[closest_point_index, 'marker']
+            marker_attribute = df.loc[closest_point_index, 'cpos']
             x_attribute = df.loc[closest_point_index, 'cpos']
             y_attribute = df.loc[closest_point_index, '-logP']
             if debug_flag:
@@ -424,10 +418,10 @@ def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled):
         x, y = event.xdata, event.ydata
         if debug_flag:
             print(x, y)
-        closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['LOD'] - y)/df['LOD'])**2).idxmin()
-        marker_attribute = df.loc[closest_point_index, 'marker']
+        closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['-logP'] - y)/df['-logP'])**2).idxmin()
+        marker_attribute = df.loc[closest_point_index, 'cpos']
         x_attribute = df.loc[closest_point_index, 'cpos']
-        y_attribute = df.loc[closest_point_index, 'LOD']
+        y_attribute = df.loc[closest_point_index, '-logP']
         txt = "Pos: "+ str(x_attribute) + ", LOD: " + str(y_attribute) + ": " + marker_attribute
         hover_annot.set_text(txt)
         hover_annot.xy = (x_attribute, y_attribute)
@@ -452,9 +446,9 @@ def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled):
     
     qtl_plot.figure.suptitle('Overlapping QTL plots for selection of traits', fontsize=20)
     
-    plt.show()
+    plt.show() # need to uncomment to be able to display and add marker annotation
     
-    #plt.savefig('../../output/Overlapping_QTL_plots_selection_traits', dpi=500)
+    qtl_plot.figure.savefig('../../output/Overlapping_QTL_plots_selection_traits', dpi=500)
     
     
     
