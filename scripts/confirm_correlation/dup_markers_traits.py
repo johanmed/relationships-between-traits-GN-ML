@@ -39,7 +39,7 @@ for marker in uniq_markers:
     indices = [ind for ind, mark in enumerate(list(markers)) if mark==marker] # get indices of rows where marker appears
     
     sel_traits = traits.iloc[indices] # select corresponding traits
-    sel_traits = list(sel_traits)
+    sel_traits = set(sel_traits)
     
     new_file2.write(f'{marker}, {sel_traits}\n') # write marker and related traits found overlapping
 
