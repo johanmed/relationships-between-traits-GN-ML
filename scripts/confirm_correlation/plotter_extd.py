@@ -4,7 +4,9 @@ Script 23
 
 This script GWAS or QTL plots of associated/correlated traits for visual confirmation
 
-Input -> selected data: (eg)../../../diabetes_gemma_association_data_plrt_filtered_selected/
+Input -> data for a selected pair of traits in ../../../diabetes_gemma_association_data_plrt_filtered_selected/
+
+eg -> ../../../diabetes_gemma_association_data_plrt_filtered_selected/UTVGXHEL1014RAWD_UTHSCGutExL0414HNF4ADNDMTI.csv
 
 Adapted from plotter. Source code can be found at https://github.com/matchcase/plotter/blob/master/plot.py
 
@@ -462,7 +464,7 @@ def parse_csv_file(file):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='Process filtered dataset concerning specific selection of traits')
+    parser = argparse.ArgumentParser(description='Process filtered dataset concerning specific selection of traits and plot overlapping plots')
     
     parser.add_argument('file', type=str, help='Path to the file to process')
     

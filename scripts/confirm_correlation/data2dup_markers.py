@@ -3,7 +3,9 @@
 """
 Script 24
 
-This script takes all association data extracted from select_data_traits_interest.py
+This script takes association data extracted for a specific pair of traits
+
+eg -> ../../../diabetes_gemma_association_data_plrt_filtered_selected/UTVGXHEL1014RAWD_UTHSCGutExL0414HNF4ADNDMTI.csv
 
 It looks for duplicates in markers column
 
@@ -13,6 +15,8 @@ It outputs them for search in literature
 
 import os
 import pandas as pd
+import argparse
+
 
 def extract_markers_lod(data_file):
 
@@ -28,24 +32,28 @@ def extract_markers_lod(data_file):
     
     for ind, dup in enumerate(list(result_dup)):
         if dup: # check if dup is True
-            extract = list(sel.iloc[ind, :]) # extract marker and LOD
-            markers_lods.append(extract) # add marker value to cont
+            extract = list(sel.iloc[ind, :]) # extract marker, LOD and desc
+            markers_lods.append(extract) # add values to cont
             
     return markers_lods
+
+
+
+if __name__ == '__main__':
     
+    parser = argparse.ArgumentParser(description='Extract overlapping markers for a specific pair of traits of interest')
+    
+    parser.add_argument('file', type=str, help='Path to association file for the pair of traits to process')    
+    
+    args = parser.parse_args()
 
-selected_files = [os.path.join('../../../diabetes_gemma_association_data_plrt_filtered_selected/', file) for file in os.listdir('../../../diabetes_gemma_association_data_plrt_filtered_selected/')]
+    data_dict = {}
 
+    data_dict['marker']=[]
+    data_dict['LOD']=[] 
+    data_dict['trait']=[]
 
-data_dict = {}
-
-data_dict['marker']=[]
-data_dict['LOD']=[] 
-data_dict['trait']=[]
-
-for file in selected_files:
-
-    final = extract_markers_lod(file)
+    final = extract_markers_lod(args.file)
     
     for el in final:
     
@@ -55,9 +63,9 @@ for file in selected_files:
         data_dict['LOD'].append(lod)
         data_dict['trait'].append(trait)
 
-data_dataf = pd.DataFrame(data_dict)
-print(data_dataf.head())
+    data_dataf = pd.DataFrame(data_dict)
+    #print(data_dataf.head())
 
-new_data_dataf = data_dataf.drop_duplicates()
+    new_data_dataf = data_dataf.drop_duplicates()
 
-new_data_dataf.to_csv('../../output/result_duplicated_markers.csv', index=False)
+    new_data_dataf.to_csv('../../output/result_duplicated_markers_selection_traits.csv', index=False)

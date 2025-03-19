@@ -13,7 +13,7 @@ ori_geno=pd.read_csv('../../processed_data/original_BXD_genotypes_project.bimbam
 #print('shape before', ori_geno.shape)
 
 ori_geno_no_lines=ori_geno.iloc[1:, :] # remove the row of RI lines
-#print('shape after', transposed_geno_no_lines.shape)
+#print('shape after', ori_geno_no_lines.shape)
 
 al1=pd.DataFrame(np.full(ori_geno_no_lines.shape[0], 'X'), index=list(ori_geno_no_lines.index))
 al2=pd.DataFrame(np.full(ori_geno_no_lines.shape[0], 'Y'), index=list(ori_geno_no_lines.index))

@@ -2,7 +2,7 @@
 
 # Script 9
 
-# Make gemma association files compatible with gemma2lmdb script because of version of gemma used, after gemma run
+# Make gemma association files compatible with gemma2dataset script because of version of gemma used, after gemma run
 
 cd output/ # change to directory for simplicity
 
