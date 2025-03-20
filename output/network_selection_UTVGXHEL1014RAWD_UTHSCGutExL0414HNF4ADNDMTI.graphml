@@ -1,0 +1,372 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d0" for="node" attr.name="trait" attr.type="boolean" />
+  <graph edgedefault="undirected">
+    <node id=" Trip12">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Ugt1a7c">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Ugt1a8">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Ugt1a9">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Ugt1a10">
+      <data key="d0">False</data>
+    </node>
+    <node id=" non-protein coding">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Prex2">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Syt14">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Kcnh1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Adgrb3">
+      <data key="d0">False</data>
+    </node>
+    <node id=" 4930453O03Rik">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Trpm8">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Atp6v1h">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Kcnb2">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Pacc1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Kcnk2">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Phlpp1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Lrrfip1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Gigyf2">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Rd3">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Cntnap5b">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Armc9">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Espnl">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Ifi208">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Sgk3  ">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Rgs7">
+      <data key="d0">False</data>
+    </node>
+    <node id=" 1700034H15Rik">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Ifi209">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Colgalt2">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Slc30a1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Slc4a3">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Brinp3">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Atp6v1h ">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Efhd1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Wdr64">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Mark1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" non-protein coding ">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Ptpn14">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Alkal1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Ugt1a6a">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Ugt1a6b">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Pign">
+      <data key="d0">False</data>
+    </node>
+    <node id=" St18 ">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Ngef">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Terf1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Rd3 ">
+      <data key="d0">False</data>
+    </node>
+    <node id=" E330020D12Rik">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Shcbp1l">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Dgkd">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Slco5a1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Hhat">
+      <data key="d0">False</data>
+    </node>
+    <node id=" C130074G19Rik">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Rgl1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Apobec4">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Gpr55">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Cxcr4">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Fmn2">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Cfhr2">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Iqca">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Smyd2">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Nmnat2">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Trpa1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" 9930111H07Rik">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Cab39">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Fh1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" St18">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Tnfrsf11a">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Lamc2">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Ints7">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Prox1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Arfgef1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Rgs20 ">
+      <data key="d0">False</data>
+    </node>
+    <node id="Trait2">
+      <data key="d0">True</data>
+    </node>
+    <node id="Trait1">
+      <data key="d0">True</data>
+    </node>
+    <edge source=" Trip12" target="Trait2" />
+    <edge source=" Trip12" target="Trait1" />
+    <edge source=" Ugt1a7c" target="Trait2" />
+    <edge source=" Ugt1a7c" target="Trait1" />
+    <edge source=" Ugt1a8" target="Trait2" />
+    <edge source=" Ugt1a8" target="Trait1" />
+    <edge source=" Ugt1a9" target="Trait2" />
+    <edge source=" Ugt1a9" target="Trait1" />
+    <edge source=" Ugt1a10" target="Trait2" />
+    <edge source=" Ugt1a10" target="Trait1" />
+    <edge source=" non-protein coding" target="Trait2" />
+    <edge source=" non-protein coding" target="Trait1" />
+    <edge source=" Prex2" target="Trait2" />
+    <edge source=" Prex2" target="Trait1" />
+    <edge source=" Syt14" target="Trait2" />
+    <edge source=" Syt14" target="Trait1" />
+    <edge source=" Kcnh1" target="Trait2" />
+    <edge source=" Kcnh1" target="Trait1" />
+    <edge source=" Adgrb3" target="Trait2" />
+    <edge source=" Adgrb3" target="Trait1" />
+    <edge source=" 4930453O03Rik" target="Trait2" />
+    <edge source=" 4930453O03Rik" target="Trait1" />
+    <edge source=" Trpm8" target="Trait2" />
+    <edge source=" Trpm8" target="Trait1" />
+    <edge source=" Atp6v1h" target="Trait2" />
+    <edge source=" Atp6v1h" target="Trait1" />
+    <edge source=" Kcnb2" target="Trait2" />
+    <edge source=" Kcnb2" target="Trait1" />
+    <edge source=" Pacc1" target="Trait2" />
+    <edge source=" Pacc1" target="Trait1" />
+    <edge source=" Kcnk2" target="Trait2" />
+    <edge source=" Kcnk2" target="Trait1" />
+    <edge source=" Phlpp1" target="Trait2" />
+    <edge source=" Phlpp1" target="Trait1" />
+    <edge source=" Lrrfip1" target="Trait2" />
+    <edge source=" Lrrfip1" target="Trait1" />
+    <edge source=" Gigyf2" target="Trait2" />
+    <edge source=" Gigyf2" target="Trait1" />
+    <edge source=" Rd3" target="Trait2" />
+    <edge source=" Rd3" target="Trait1" />
+    <edge source=" Cntnap5b" target="Trait2" />
+    <edge source=" Cntnap5b" target="Trait1" />
+    <edge source=" Armc9" target="Trait2" />
+    <edge source=" Armc9" target="Trait1" />
+    <edge source=" Espnl" target="Trait2" />
+    <edge source=" Espnl" target="Trait1" />
+    <edge source=" Ifi208" target="Trait2" />
+    <edge source=" Ifi208" target="Trait1" />
+    <edge source=" Sgk3  " target="Trait2" />
+    <edge source=" Sgk3  " target="Trait1" />
+    <edge source=" Rgs7" target="Trait2" />
+    <edge source=" Rgs7" target="Trait1" />
+    <edge source=" 1700034H15Rik" target="Trait2" />
+    <edge source=" 1700034H15Rik" target="Trait1" />
+    <edge source=" Ifi209" target="Trait2" />
+    <edge source=" Ifi209" target="Trait1" />
+    <edge source=" Colgalt2" target="Trait2" />
+    <edge source=" Colgalt2" target="Trait1" />
+    <edge source=" Slc30a1" target="Trait2" />
+    <edge source=" Slc30a1" target="Trait1" />
+    <edge source=" Slc4a3" target="Trait2" />
+    <edge source=" Slc4a3" target="Trait1" />
+    <edge source=" Brinp3" target="Trait2" />
+    <edge source=" Brinp3" target="Trait1" />
+    <edge source=" Atp6v1h " target="Trait2" />
+    <edge source=" Atp6v1h " target="Trait1" />
+    <edge source=" Efhd1" target="Trait2" />
+    <edge source=" Efhd1" target="Trait1" />
+    <edge source=" Wdr64" target="Trait2" />
+    <edge source=" Wdr64" target="Trait1" />
+    <edge source=" Mark1" target="Trait2" />
+    <edge source=" Mark1" target="Trait1" />
+    <edge source=" non-protein coding " target="Trait2" />
+    <edge source=" non-protein coding " target="Trait1" />
+    <edge source=" Ptpn14" target="Trait2" />
+    <edge source=" Ptpn14" target="Trait1" />
+    <edge source=" Alkal1" target="Trait2" />
+    <edge source=" Alkal1" target="Trait1" />
+    <edge source=" Ugt1a6a" target="Trait2" />
+    <edge source=" Ugt1a6a" target="Trait1" />
+    <edge source=" Ugt1a6b" target="Trait2" />
+    <edge source=" Ugt1a6b" target="Trait1" />
+    <edge source=" Pign" target="Trait2" />
+    <edge source=" Pign" target="Trait1" />
+    <edge source=" St18 " target="Trait2" />
+    <edge source=" St18 " target="Trait1" />
+    <edge source=" Ngef" target="Trait2" />
+    <edge source=" Ngef" target="Trait1" />
+    <edge source=" Terf1" target="Trait2" />
+    <edge source=" Terf1" target="Trait1" />
+    <edge source=" Rd3 " target="Trait2" />
+    <edge source=" Rd3 " target="Trait1" />
+    <edge source=" E330020D12Rik" target="Trait2" />
+    <edge source=" E330020D12Rik" target="Trait1" />
+    <edge source=" Shcbp1l" target="Trait2" />
+    <edge source=" Shcbp1l" target="Trait1" />
+    <edge source=" Dgkd" target="Trait2" />
+    <edge source=" Dgkd" target="Trait1" />
+    <edge source=" Slco5a1" target="Trait2" />
+    <edge source=" Slco5a1" target="Trait1" />
+    <edge source=" Hhat" target="Trait2" />
+    <edge source=" Hhat" target="Trait1" />
+    <edge source=" C130074G19Rik" target="Trait2" />
+    <edge source=" C130074G19Rik" target="Trait1" />
+    <edge source=" Rgl1" target="Trait2" />
+    <edge source=" Rgl1" target="Trait1" />
+    <edge source=" Apobec4" target="Trait2" />
+    <edge source=" Apobec4" target="Trait1" />
+    <edge source=" Gpr55" target="Trait2" />
+    <edge source=" Gpr55" target="Trait1" />
+    <edge source=" Cxcr4" target="Trait2" />
+    <edge source=" Cxcr4" target="Trait1" />
+    <edge source=" Fmn2" target="Trait2" />
+    <edge source=" Fmn2" target="Trait1" />
+    <edge source=" Cfhr2" target="Trait2" />
+    <edge source=" Cfhr2" target="Trait1" />
+    <edge source=" Iqca" target="Trait2" />
+    <edge source=" Iqca" target="Trait1" />
+    <edge source=" Smyd2" target="Trait2" />
+    <edge source=" Smyd2" target="Trait1" />
+    <edge source=" Nmnat2" target="Trait2" />
+    <edge source=" Nmnat2" target="Trait1" />
+    <edge source=" Trpa1" target="Trait2" />
+    <edge source=" Trpa1" target="Trait1" />
+    <edge source=" 9930111H07Rik" target="Trait2" />
+    <edge source=" 9930111H07Rik" target="Trait1" />
+    <edge source=" Cab39" target="Trait2" />
+    <edge source=" Cab39" target="Trait1" />
+    <edge source=" Fh1" target="Trait2" />
+    <edge source=" Fh1" target="Trait1" />
+    <edge source=" St18" target="Trait2" />
+    <edge source=" St18" target="Trait1" />
+    <edge source=" Tnfrsf11a" target="Trait2" />
+    <edge source=" Tnfrsf11a" target="Trait1" />
+    <edge source=" Lamc2" target="Trait2" />
+    <edge source=" Lamc2" target="Trait1" />
+    <edge source=" Ints7" target="Trait2" />
+    <edge source=" Ints7" target="Trait1" />
+    <edge source=" Prox1" target="Trait2" />
+    <edge source=" Prox1" target="Trait1" />
+    <edge source=" Arfgef1" target="Trait2" />
+    <edge source=" Arfgef1" target="Trait1" />
+    <edge source=" Rgs20 " target="Trait2" />
+    <edge source=" Rgs20 " target="Trait1" />
+  </graph>
+</graphml>
