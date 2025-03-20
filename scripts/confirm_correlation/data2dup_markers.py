@@ -9,7 +9,7 @@ eg -> ../../../diabetes_gemma_association_data_plrt_filtered_selected/UTVGXHEL10
 
 It looks for duplicates in markers column
 
-It outputs them for search in literature
+It outputs them in a file
 
 """
 
@@ -67,5 +67,8 @@ if __name__ == '__main__':
     #print(data_dataf.head())
 
     new_data_dataf = data_dataf.drop_duplicates()
-
-    new_data_dataf.to_csv('../../output/result_duplicated_markers_selection_traits.csv', index=False)
+    
+    trait1=input("Please confirm trait 1:")
+    trait2=input("Please confirm trait 2:")
+    
+    new_data_dataf.to_csv(f'../../output/result_duplicated_markers_{trait1}_{trait2}.csv', index=False)

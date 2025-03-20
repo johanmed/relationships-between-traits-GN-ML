@@ -2,13 +2,15 @@
 """
 Script 23
 
-This script GWAS or QTL plots of associated/correlated traits for visual confirmation
+This script draws GWAS or QTL plots of associated/correlated traits for visual confirmation
 
 Input -> data for a selected pair of traits in ../../../diabetes_gemma_association_data_plrt_filtered_selected/
 
 eg -> ../../../diabetes_gemma_association_data_plrt_filtered_selected/UTVGXHEL1014RAWD_UTHSCGutExL0414HNF4ADNDMTI.csv
 
 Adapted from plotter. Source code can be found at https://github.com/matchcase/plotter/blob/master/plot.py
+
+Outplot: GWAS or QTL plot
 
 """
 
@@ -27,7 +29,7 @@ warnings.filterwarnings("ignore")
 debug_flag = False
 
 
-def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled):
+def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled, trait1, trait2):
     
     # Define cpos using to chr and pos sorting
     
@@ -228,11 +230,11 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled):
     plt.legend(loc='upper right')
     manhattan_plot._legend.remove()
     
-    manhattan_plot.figure.suptitle('Overlapping GWAS plots for selection of traits', fontsize=20)
+    manhattan_plot.figure.suptitle(f'Overlapping GWAS plots for {trait1} {trait2}', fontsize=20)
     
     plt.show() # need to uncomment to be able to display and add marker annotation
     
-    manhattan_plot.figure.savefig('../../output/Overlapping_GWAS_plots_selection_traits', dpi=500)
+    manhattan_plot.figure.savefig(f'../../output/Overlapping_GWAS_plots_{trait1}_{trait2}', dpi=500)
 
 
 
@@ -240,7 +242,7 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled):
 
 
 
-def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled):
+def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled, trait1, trait2):
     
     # Define cpos using to chr and pos sorting
     
@@ -446,11 +448,11 @@ def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled):
     plt.legend(loc='upper right')
     qtl_plot._legend.remove()
     
-    qtl_plot.figure.suptitle('Overlapping QTL plots for selection of traits', fontsize=20)
+    qtl_plot.figure.suptitle(f'Overlapping QTL plots for {trait1} {trait2}', fontsize=20)
     
     plt.show() # need to uncomment to be able to display and add marker annotation
     
-    qtl_plot.figure.savefig('../../output/Overlapping_QTL_plots_selection_traits', dpi=500)
+    qtl_plot.figure.savefig(f'../../output/Overlapping_QTL_plots_{trait1}_{trait2}', dpi=500)
     
     
     
@@ -485,6 +487,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     
+    trait1=input("Please confirm trait 1:")
+    trait2=input("Please confirm trait 2:")
+    
     _, file_extension = os.path.splitext(args.file)
     
     if file_extension.lower() == '.csv':
@@ -498,7 +503,7 @@ if __name__ == "__main__":
     
     # Proceed to drawing
     if args.type=='gwas':
-        draw_manhattan_plot(data, args.peak, args.threshold, args.hover) 
+        draw_manhattan_plot(data, args.peak, args.threshold, args.hover, trait1, trait2) 
         
     elif args.type=='qtl':
-        draw_qtl_plot(data, args.peak, args.threshold, args.hover)
+        draw_qtl_plot(data, args.peak, args.threshold, args.hover, trait1, trait2)

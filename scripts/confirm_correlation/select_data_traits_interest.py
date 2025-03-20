@@ -8,8 +8,10 @@ This script takes:
 - selected traits: ../../processed_data/priori_list_traits.csv
 - marker annotation file: ../../processed_data/BXD_snps.txt
 
-It returns the rows of the dataset containing pair of traits in selection 
-Saves in respective csv file
+It returns the rows of the dataset containing pair of traits in selection
+
+It saves in respective csv file
+
 """
 
 import argparse
