@@ -6,7 +6,7 @@ This script draws GWAS or QTL plots of associated/correlated traits for visual c
 
 Input -> data for a selected pair of traits in ../../../diabetes_gemma_association_data_plrt_filtered_selected/
 
-eg -> ../../../diabetes_gemma_association_data_plrt_filtered_selected/UTVGXHEL1014RAWD_UTHSCGutExL0414HNF4ADNDMTI.csv
+eg -> ../../../diabetes_gemma_association_data_plrt_filtered_selected/EPFLMouseLiverBothExRMA0413HNF4ADNDMTI_EPFLMouseLiverBothExRMA0413LR.csv
 
 Adapted from plotter. Source code can be found at https://github.com/matchcase/plotter/blob/master/plot.py
 

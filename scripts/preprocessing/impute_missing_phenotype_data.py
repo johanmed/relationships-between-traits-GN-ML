@@ -21,6 +21,18 @@ f1.close()
 trimmed_BXD_data=pd.read_csv('../../processed_data/diabetes_fully_trimmed_phenotype_file.bimbam', header=None, names=order_traits)
 trimmed_data=trimmed_BXD_data.copy()
 
+
+#print('trimmed data looks like \n', trimmed_data.head())
+
+
+# 3. Remove traits with only 1 value before imputation
+
+for column in trimmed_data.columns:
+    count = trimmed_data[column].value_counts()
+    uniq = list(count.index)
+    if  len(uniq) < 2:
+        trimmed_data.drop(labels=[column], axis = 1, inplace = True)
+      
 #print('trimmed data looks like \n', trimmed_data.head())
 
 

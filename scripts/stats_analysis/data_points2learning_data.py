@@ -71,6 +71,7 @@ class NewColumns2Clustering:
         Use neural networks to predict cluster and distance of each data in the set
         """
         clusters_pred, distances_pred = neural_clustering.predict(data)
+        print(clusters_pred)
         
         final_clusters = get_clusters_labels(clusters_pred)
         

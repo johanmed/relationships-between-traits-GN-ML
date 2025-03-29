@@ -45,7 +45,7 @@ best_model=input('Please type the abbreviation of the best model you have got: '
 
 if os.path.exists(f'{best_model}_clustering/{best_model}_clustering_hits.pkl'): # check best model for hits
 
-    best_model_clust=joblib.load('birch_clustering/birch_clustering_hits.pkl') # load the best model for hits
+    best_model_clust=joblib.load(f'{best_model}_clustering/birch_clustering_hits.pkl') # load the best model for hits
     
     clusters_hits, distances_hits=predict_cluster_distance(full_X_rec, preprocessing_hits, best_model_clust)
     
@@ -55,7 +55,7 @@ if os.path.exists(f'{best_model}_clustering/{best_model}_clustering_hits.pkl'): 
 
 if os.path.exists(f'{best_model}_clustering/{best_model}_clustering_qtl.pkl'): # check the best model for QTL
     
-    best_model_clust=joblib.load('birch_clustering/birch_clustering_qtl.pkl') # load the best model for QTL
+    best_model_clust=joblib.load(f'{best_model}_clustering/birch_clustering_qtl.pkl') # load the best model for QTL
     
     clusters_qtl, distances_qtl=predict_cluster_distance(full_X_rec, preprocessing_qtl, best_model_clust)
     

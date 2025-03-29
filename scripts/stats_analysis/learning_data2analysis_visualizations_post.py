@@ -112,7 +112,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-type_option_levels = {'hits':{1:4, 2:5, 3:6, 4:7}, 'qtl':{1:9.0, 2:9.2, 3:9.4, 4:9.6, 5:9.8, 6:10.0}} # define mapping between type of model, options and distance thresholds
+type_option_levels = {'hits':{1:4, 2:5, 3:6, 4:7}, 'qtl':{1:9.2, 2:9.4, 3:9.6, 4:9.8, 5:10.0}} # define mapping between type of model, options and distance thresholds
  
 
 def sort_second_el(seq): # utility function for sorting according to second element

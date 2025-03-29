@@ -116,7 +116,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-type_option_levels = {'hits':{1:4, 2:5, 3:6, 4:7}, 'qtl':{1:9.0, 2:9.2, 3:9.4, 4:9.6, 5:9.8, 6:10.0}} # define mapping between type of model, options and distance thresholds
+type_option_levels = {'hits':{1:4, 2:5, 3:6, 4:7}, 'qtl':{1:9.2, 2:9.4, 3:9.6, 4:9.8, 5:10.0}} # define mapping between type of model, options and distance thresholds
  
 
 def sort_second_el(seq): # utility function for sorting according to second element
@@ -155,7 +155,8 @@ def analyze_association(clust_trait_dist, level, sort_second_el): # level set by
             
         results[cluster]=new_freq_assoc_traits
         
-        results=pd.DataFrame(results) # convert to dataframe where traits are indices and clusters columns
+    results=pd.DataFrame(results) # convert to dataframe where traits are indices and clusters columns
+    
         
     return results.iloc[:50, :] # select first 50 traits
 

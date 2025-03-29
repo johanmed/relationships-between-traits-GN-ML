@@ -5,7 +5,7 @@ Script 24
 
 This script takes association data extracted for a specific pair of traits
 
-eg -> ../../../diabetes_gemma_association_data_plrt_filtered_selected/UTVGXHEL1014RAWD_UTHSCGutExL0414HNF4ADNDMTI.csv
+eg -> ../../../diabetes_gemma_association_data_plrt_filtered_selected/EPFLMouseLiverBothExRMA0413HNF4ADNDMTI_EPFLMouseLiverBothExRMA0413LR.csv
 
 It looks for duplicates in markers column
 
