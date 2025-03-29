@@ -65,5 +65,5 @@ imputed_BXD_data.to_csv("../../processed_data/diabetes_imputed_phenotype_file.bi
 # 5. Save the new order of the trait names
 
 f2=open('../../processed_data/modified_order_trait_names_phenotype_file.csv', 'w')
-f2.write(','.join(order_traits))
+f2.write(','.join(new_order_traits))
 f2.close()
