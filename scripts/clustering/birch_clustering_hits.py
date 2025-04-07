@@ -15,8 +15,8 @@ Modelling by hits (chromosome number + marker position)
 
 import os
 
-from vector_data_pre import training_set as X_train
-from vector_data_pre import validation_set as X_valid
+from vector_data_pre import train_set as X_train
+from vector_data_pre import valid_set as X_valid
 from vector_data_pre import test_set as X_test
 
 from vector_data_pre import preprocessing_hits
@@ -24,11 +24,17 @@ from vector_data_pre import preprocessing_hits
 import pandas as pd
 import numpy as np
 
-X_train=X_train[['p_lrt', 'chr_num', 'pos']]
+desc_train = X_train['full_desc']
 
-X_valid=X_valid[['p_lrt', 'chr_num', 'pos']]
+X_train=X_train[['lod', 'chr_num', 'pos']]
 
-X_test=X_test[['p_lrt', 'chr_num', 'pos']]
+desc_valid = X_valid['full_desc']
+
+X_valid=X_valid[['lod', 'chr_num', 'pos']]
+
+desc_test = X_test['full_desc']
+
+X_test=X_test[['lod', 'chr_num', 'pos']]
 
 
 X_train_full= pd.concat([X_train, X_valid]) # define bigger training set to train model on before going to test set
@@ -37,8 +43,8 @@ X_train_full= pd.concat([X_train, X_valid]) # define bigger training set to trai
 
 from sklearn.cluster import Birch # import Birch class for clustering
 import matplotlib.pyplot as plt # import plot manager
+import matplotlib
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import silhouette_score
 
 from general_clustering import ModellingBirch
 
@@ -62,43 +68,92 @@ class Columns2Clustering(ModellingBirch):
         return preprocessed_training, preprocessed_validation, preprocessed_test
         
 
-    def perform_birch(self, reduced_features_valid, n_clusters=10):
+    def perform_birch(self, reduced_features_valid, n_clusters):
         """
         Perform Birch clustering on 2 features columns obtained from transformation
-        Try different number of clusters and select the one with the best silhouette score
-        Return pipeline: hits transformation + clustering with the best number of clusters
+        Return pipeline: hits transformation + clustering
         """
-        n_cluster_sil=[]
-        for num in range(2, n_clusters):
         
-            birch_clustering=Pipeline([('preprocessing_hits', preprocessing_hits), ('birch', Birch(n_clusters=num))])
-            birch_clustering.fit(self.training) # work with 2 features provided
-            y_pred=birch_clustering.predict(self.validation)
-        
-            sil=silhouette_score(reduced_features_valid, y_pred)
-            print('The silhouette score obtained as clustering performance measure is:', sil)
-            n_cluster_sil.append([num, sil])
-            
-        def sort_second(arr): # utility function to sort based on second element
-            return arr[1]
-            
-        sorted_n_cluster_sil=sorted(n_cluster_sil, key=sort_second, reverse=True) # sort according to the highest silhouette score
-        
-        birch_clustering=Pipeline([('preprocessing_hits', preprocessing_hits), ('birch', Birch(n_clusters=sorted_n_cluster_sil[0][0]))]) # reperform clustering with the best number of clusters
+        birch_clustering=Pipeline([('preprocessing_hits', preprocessing_hits), ('birch', Birch(n_clusters=n_clusters))]) # perform clustering using specified number of clusters
         birch_clustering.fit(self.training)
         
         return birch_clustering
         
-    
-    def visualize_plot(plot_birch, birch_clustering, X_train, size=200):
+        
+    def visualize_plot(plot_birch, birch_clustering, X, n_clusters, size=200):
         """
         Generate actual visualization of clusters
         Save figure
         """
         plt.figure(figsize=(10, 10))
-        plot_birch(birch_clustering, X_train, size)
-        plt.savefig(os.path.join(out_dir, f"Birch_clustering_result_by_hits"))
+        plot_birch(birch_clustering, X, size)
+        plt.savefig(os.path.join(out_dir, f"Birch_clustering_result_by_hits_{n_clusters}_clusters"))
         
+    
+    def annotate_plot(X, anno, type_anno, size=500):
+        """
+        Annotate plot with trait information
+        Save figure
+        """
+        
+        colors = matplotlib.colormaps['tab20b'].colors +  matplotlib.colormaps['tab20c'].colors # define possible colors
+        
+        plt.figure(figsize=(10, 10))
+            
+            
+        if type_anno == 'trait':
+        
+            dic={} # Get numeric values for anno that can be used for color
+        
+            start=0
+        
+            for ind, trait in enumerate(anno):
+                trait = ' '.join(trait.split(' ')[:2]) # select only first 2 words of description, do away of dataset name for simplicity, as long as description is the same, consider the same
+                if trait in dic.keys():
+                    continue
+                else:
+                    dic[trait] = start # associate numeric values to colors
+                    start += 1
+        
+            labels=[dic[' '.join(trait.split(' ')[:2])] for trait in anno] # apply previous formatting to trait to get corresponding value
+            
+            unique_labels = list(dic.values())
+            unique_names = list(dic.keys())
+    
+    
+            for ind, label in enumerate(unique_labels):
+                mask = np.array(labels) == label
+                plt.scatter(X[mask, 0], X[mask, 1], c=colors[ind], label=f'Trait {unique_names[ind][:50]}', alpha=0.7, edgecolors='black', linewidth=0.5)
+        
+        elif type_anno == 'chromo':
+        
+            dic={} 
+        
+            start=0
+        
+            for ind, chromo in enumerate(anno):
+                
+                if chromo in dic.keys():
+                    continue
+                else:
+                    dic[chromo] = start # associate numeric values to colors
+                    start += 1
+                    
+            labels=[dic[chromo] for chromo in anno] # apply previous formatting to trait to get corresponding value
+            
+            unique_labels = list(dic.values())
+            unique_names = list(dic.keys())
+            
+            for ind, label in enumerate(unique_labels):
+                mask = np.array(labels) == label
+                plt.scatter(X[mask, 0], X[mask, 1], c=colors[ind], label=label, alpha=0.7, edgecolors='black', linewidth=0.5)
+                
+            
+        plt.xlabel("PC 1", fontsize=10)
+        plt.ylabel("PC 2", fontsize=10, rotation=90)
+        plt.legend(loc='upper right')
+        plt.savefig(os.path.join(out_dir, f"Birch_hits_clustering_data_annotated_{type_anno}"), dpi=500)
+
 
 
 # Main
@@ -117,16 +172,18 @@ def main():
         clustering_task=Columns2Clustering(X_train, X_valid, X_test)
 
         X_train_features, X_valid_features, X_test_features=clustering_task.get_features()
+        
+        for n_clusters in range(2, 11): # try values between 2 and 10
 
-        actual_clustering=clustering_task.perform_birch(X_valid_features)
+            actual_clustering=clustering_task.perform_birch(X_valid_features, n_clusters)
 
-        joblib.dump(actual_clustering[1], 'birch_clustering/birch_clustering_hits.pkl')
-    
-        #Columns2Clustering.visualize_plot(Columns2Clustering.plot_birch, actual_clustering[1], X_train_features)
+            Columns2Clustering.visualize_plot(Columns2Clustering.plot_birch, actual_clustering[1], X_valid_features, n_clusters) # Plot only validation data (more manageable than training data for plotting)
 
-        Columns2Clustering.visualize_plot(Columns2Clustering.plot_birch, actual_clustering[1], X_valid_features) # Plot only validation data (more manageable than training data for plotting)
-
-    
+        
+        Columns2Clustering.annotate_plot(X_valid_features, list(desc_valid), 'trait')
+        
+        
+        Columns2Clustering.annotate_plot(X_valid_features, list(X_valid['chr_num']), 'chromo')
     
 
 main()
