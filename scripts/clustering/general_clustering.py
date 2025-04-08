@@ -27,7 +27,7 @@ class ModellingBirch:
         anomalies_mask=new_labels== -1
         cores=clusterer.subcluster_centers_
         anomalies=X[anomalies_mask]
-    
+        
         plt.scatter(X[:, 0], X[:, 1], c=new_labels, marker='o', s=size, cmap='Paired')
         plt.scatter(cores[:, 0], cores[:, 1], marker='*', s=100, c='b')
         plt.scatter(anomalies[:, 0], anomalies[:, 1], c="r", marker="x", s=100)
