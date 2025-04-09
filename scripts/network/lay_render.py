@@ -15,10 +15,10 @@ attrs = {
     "edgecolors" : "black", # For Networkx 2.0
     "linewidths" : 1,       # For Networkx 2.0
     "font_family" : "Liberation Sans Narrow",
-    "font_size" : 14,
+    "font_size" : 20,
     "node_color" : "pink",
-    "node_size" : 700,
-    "width" : 2,
+    "node_size" : 1000,
+    "width" : 5,
 }
 
 
@@ -46,6 +46,7 @@ def set_extent(positions, axes, title=None):
     except AttributeError:
         axes.xlim(x_min - x_margin, x_max + x_margin)
         axes.ylim(y_min - y_margin, y_max + y_margin)
+
 
 def plot(fname, save = False):
     plt.tight_layout()

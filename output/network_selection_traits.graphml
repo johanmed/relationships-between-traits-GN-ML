@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d0" for="node" attr.name="trait" attr.type="boolean" />
+  <graph edgedefault="undirected">
+    <node id="UTHSCGutExL0414 LR">
+      <data key="d0">True</data>
+    </node>
+    <node id=" Hecw2">
+      <data key="d0">False</data>
+    </node>
+    <node id="UTILMBXDhippNON1112 DE1">
+      <data key="d0">True</data>
+    </node>
+    <node id="EPFLMouseLiverHFCEx0413 HNF4ADNDMTI">
+      <data key="d0">True</data>
+    </node>
+    <node id="UMCG0907Myeloid ITFLD">
+      <data key="d0">True</data>
+    </node>
+    <node id=" Tns1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Slco5a1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Spag16 ">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Cfap65 ">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Rab23">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Mark1">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Slc4a3">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Vwc2l">
+      <data key="d0">False</data>
+    </node>
+    <node id=" C130074G19Rik">
+      <data key="d0">False</data>
+    </node>
+    <node id=" Khdrbs2">
+      <data key="d0">False</data>
+    </node>
+    <edge source="UTHSCGutExL0414 LR" target=" Hecw2" />
+    <edge source="UTHSCGutExL0414 LR" target=" Tns1" />
+    <edge source="UTHSCGutExL0414 LR" target=" Slco5a1" />
+    <edge source="UTHSCGutExL0414 LR" target=" Spag16 " />
+    <edge source="UTHSCGutExL0414 LR" target=" Cfap65 " />
+    <edge source="UTHSCGutExL0414 LR" target=" Rab23" />
+    <edge source="UTHSCGutExL0414 LR" target=" Mark1" />
+    <edge source="UTHSCGutExL0414 LR" target=" Slc4a3" />
+    <edge source="UTHSCGutExL0414 LR" target=" Vwc2l" />
+    <edge source="UTHSCGutExL0414 LR" target=" C130074G19Rik" />
+    <edge source="UTHSCGutExL0414 LR" target=" Khdrbs2" />
+    <edge source=" Hecw2" target="UTILMBXDhippNON1112 DE1" />
+    <edge source=" Hecw2" target="EPFLMouseLiverHFCEx0413 HNF4ADNDMTI" />
+    <edge source=" Hecw2" target="UMCG0907Myeloid ITFLD" />
+    <edge source="UTILMBXDhippNON1112 DE1" target=" Tns1" />
+    <edge source="UTILMBXDhippNON1112 DE1" target=" Slco5a1" />
+    <edge source="UTILMBXDhippNON1112 DE1" target=" Spag16 " />
+    <edge source="UTILMBXDhippNON1112 DE1" target=" Cfap65 " />
+    <edge source="UTILMBXDhippNON1112 DE1" target=" Rab23" />
+    <edge source="UTILMBXDhippNON1112 DE1" target=" Mark1" />
+    <edge source="UTILMBXDhippNON1112 DE1" target=" Slc4a3" />
+    <edge source="UTILMBXDhippNON1112 DE1" target=" Vwc2l" />
+    <edge source="UTILMBXDhippNON1112 DE1" target=" C130074G19Rik" />
+    <edge source="UTILMBXDhippNON1112 DE1" target=" Khdrbs2" />
+    <edge source="EPFLMouseLiverHFCEx0413 HNF4ADNDMTI" target=" Tns1" />
+    <edge source="EPFLMouseLiverHFCEx0413 HNF4ADNDMTI" target=" Slco5a1" />
+    <edge source="EPFLMouseLiverHFCEx0413 HNF4ADNDMTI" target=" Spag16 " />
+    <edge source="EPFLMouseLiverHFCEx0413 HNF4ADNDMTI" target=" Cfap65 " />
+    <edge source="EPFLMouseLiverHFCEx0413 HNF4ADNDMTI" target=" Rab23" />
+    <edge source="EPFLMouseLiverHFCEx0413 HNF4ADNDMTI" target=" Mark1" />
+    <edge source="EPFLMouseLiverHFCEx0413 HNF4ADNDMTI" target=" Slc4a3" />
+    <edge source="EPFLMouseLiverHFCEx0413 HNF4ADNDMTI" target=" Vwc2l" />
+    <edge source="EPFLMouseLiverHFCEx0413 HNF4ADNDMTI" target=" C130074G19Rik" />
+    <edge source="EPFLMouseLiverHFCEx0413 HNF4ADNDMTI" target=" Khdrbs2" />
+    <edge source="UMCG0907Myeloid ITFLD" target=" Tns1" />
+    <edge source="UMCG0907Myeloid ITFLD" target=" Slco5a1" />
+    <edge source="UMCG0907Myeloid ITFLD" target=" Spag16 " />
+    <edge source="UMCG0907Myeloid ITFLD" target=" Cfap65 " />
+    <edge source="UMCG0907Myeloid ITFLD" target=" Rab23" />
+    <edge source="UMCG0907Myeloid ITFLD" target=" Mark1" />
+    <edge source="UMCG0907Myeloid ITFLD" target=" Slc4a3" />
+    <edge source="UMCG0907Myeloid ITFLD" target=" Vwc2l" />
+    <edge source="UMCG0907Myeloid ITFLD" target=" C130074G19Rik" />
+    <edge source="UMCG0907Myeloid ITFLD" target=" Khdrbs2" />
+  </graph>
+</graphml>
