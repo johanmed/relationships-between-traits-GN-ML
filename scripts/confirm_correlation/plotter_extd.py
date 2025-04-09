@@ -4,9 +4,7 @@ Script 23
 
 This script draws GWAS or QTL plots of associated/correlated traits for visual confirmation
 
-Input -> data for a selected pair of traits in ../../../diabetes_gemma_association_data_plrt_filtered_selected/
-
-eg -> ../../../diabetes_gemma_association_data_plrt_filtered_selected/EPFLMouseLiverBothExRMA0413HNF4ADNDMTI_EPFLMouseLiverBothExRMA0413LR.csv
+Input : eg -> ../../../diabetes_gemma_association_data_plrt_filtered_selected_traits_modified.csv
 
 Adapted from plotter. Source code can be found at https://github.com/matchcase/plotter/blob/master/plot.py
 
@@ -29,13 +27,13 @@ warnings.filterwarnings("ignore")
 debug_flag = False
 
 
-def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled, trait1, trait2):
+def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled):
     
     # Define cpos using to chr and pos sorting
     
     df.chr = df.chr.astype('category')
-    category_order = df.chr.unique()
-    df.chr = df.chr.cat.set_categories(category_order, ordered=True)
+    category_order = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 'X']
+    df.chr = df.chr.cat.set_categories(category_order, ordered=True, rename=True)
     shiftpos = 0
     
     cpos = []
@@ -57,7 +55,7 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled, trait1
         data=df,
         alpha=0.7,
         x='cpos',
-        y='-logP',
+        y='lod',
         hue='full_desc',
         palette=palette_col,
         linewidth=0,
@@ -68,7 +66,7 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled, trait1
     
     manhattan_plot.figure.set_size_inches(20, 20)
     manhattan_plot.ax.set_ylim(-0.05, None)
-    manhattan_plot.ax.set_ylabel('-log P', rotation=0, labelpad=24)
+    manhattan_plot.ax.set_ylabel('LOD', rotation=0, labelpad=24)
     cpos_spacing = (df.groupby('chr', observed=False)['cpos'].max()).iloc[0]
     cpos_spacing = cpos_spacing - (df.groupby('chr', observed=False)['cpos'].min()).iloc[0]
     cpos_spacing = cpos_spacing/20
@@ -100,7 +98,7 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled, trait1
     
     # Draw peak line if asked
     if draw_peak:
-        maxlp = df.loc[df['-logP'].idxmax()]
+        maxlp = df.loc[df['lod'].idxmax()]
         manhattan_plot.ax.axvline(x=maxlp['cpos'],
                                   color=sns.color_palette('deep')[3],
                                   linestyle='dashed',
@@ -143,11 +141,11 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled, trait1
             if debug_flag:
                 print(x, y)
                 
-            closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['-logP'] - y)/df['-logP'])**2).idxmin()
+            closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['lod'] - y)/df['lod'])**2).idxmin()
             
             marker_attribute = df.loc[closest_point_index, 'cpos']
             x_attribute = df.loc[closest_point_index, 'cpos']
-            y_attribute = df.loc[closest_point_index, '-logP']
+            y_attribute = df.loc[closest_point_index, 'lod']
             if debug_flag:
                 print(x_attribute, y_attribute)
                 print(f"Clicked on point with marker attribute: {marker_attribute}")
@@ -204,12 +202,12 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled, trait1
         if debug_flag:
             print(x, y)
         
-        closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['-logP'] - y)/df['-logP'])**2).idxmin()
+        closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['lod'] - y)/df['lod'])**2).idxmin()
               
         marker_attribute = df.loc[closest_point_index, 'cpos']
         x_attribute = df.loc[closest_point_index, 'cpos']
-        y_attribute = df.loc[closest_point_index, '-logP']
-        txt = "Pos: "+ str(x_attribute) + ", -logP: " + str(y_attribute) + ": "+ marker_attribute
+        y_attribute = df.loc[closest_point_index, 'lod']
+        txt = "Pos: "+ str(x_attribute) + ", LOD: " + str(y_attribute) + ": "+ marker_attribute
         hover_annot.set_text(txt)
         hover_annot.xy = (x_attribute, y_attribute)
         hover_annot.get_bbox_patch().set_alpha(0.4)
@@ -230,11 +228,11 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled, trait1
     plt.legend(loc='upper right')
     manhattan_plot._legend.remove()
     
-    manhattan_plot.figure.suptitle(f'Overlapping GWAS plots for {trait1} {trait2}', fontsize=20)
+    manhattan_plot.figure.suptitle(f'Overlapping GWAS plots for selected_traits', fontsize=20)
     
     plt.show() # need to uncomment to be able to display and add marker annotation
     
-    manhattan_plot.figure.savefig(f'../../output/Overlapping_GWAS_plots_{trait1}_{trait2}', dpi=500)
+    manhattan_plot.figure.savefig(f'../../output/Overlapping_GWAS_plots_selected_traits', dpi=500)
 
 
 
@@ -242,13 +240,13 @@ def draw_manhattan_plot(df, draw_peak, threshold_value, hovering_enabled, trait1
 
 
 
-def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled, trait1, trait2):
+def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled):
     
     # Define cpos using to chr and pos sorting
     
     df.chr = df.chr.astype('category')
-    category_order = df.chr.unique()
-    df.chr = df.chr.cat.set_categories(category_order, ordered=True)
+    category_order = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 'X']
+    df.chr = df.chr.cat.set_categories(category_order, ordered=True, rename=True)
     shiftpos = 0
     
     cpos = []
@@ -270,7 +268,7 @@ def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled, trait1, trai
         data=df,
         alpha=0.7,
         x='cpos',
-        y='-logP',
+        y='lod',
         hue='full_desc',
         palette=palette_col,
         legend='auto', 
@@ -287,7 +285,7 @@ def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled, trait1, trai
         qtl_plot.ax.fill_between(x, -0.05, y, color=line.get_color(), alpha=0.3)
         
     qtl_plot.ax.set_ylim(-0.05, None)
-    qtl_plot.ax.set_ylabel('-log P', rotation=0, labelpad=24)
+    qtl_plot.ax.set_ylabel('LOD', rotation=0, labelpad=24)
     cpos_spacing = (df.groupby('chr', observed=False)['cpos'].max()).iloc[0]
     cpos_spacing = cpos_spacing - (df.groupby('chr', observed=False)['cpos'].min()).iloc[0]
     cpos_spacing = cpos_spacing/20
@@ -319,7 +317,7 @@ def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled, trait1, trai
     
     # Draw peak line if asked
     if draw_peak:
-        maxlp = df.loc[df['-logP'].idxmax()]
+        maxlp = df.loc[df['lod'].idxmax()]
         qtl_plot.ax.axvline(x=maxlp['cpos'],
                                   color=sns.color_palette('deep')[3],
                                   linestyle='dashed',
@@ -363,10 +361,10 @@ def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled, trait1, trai
             x, y = event.xdata, event.ydata
             if debug_flag:
                 print(x, y)
-            closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['-logP'] - y)/df['-logP'])**2).idxmin()
+            closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['lod'] - y)/df['lod'])**2).idxmin()
             marker_attribute = df.loc[closest_point_index, 'cpos']
             x_attribute = df.loc[closest_point_index, 'cpos']
-            y_attribute = df.loc[closest_point_index, '-logP']
+            y_attribute = df.loc[closest_point_index, 'lod']
             if debug_flag:
                 print(x_attribute, y_attribute)
                 print(f"Clicked on point with marker attribute: {marker_attribute}")
@@ -422,10 +420,10 @@ def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled, trait1, trai
         x, y = event.xdata, event.ydata
         if debug_flag:
             print(x, y)
-        closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['-logP'] - y)/df['-logP'])**2).idxmin()
+        closest_point_index = (((df['cpos'] - x)/df['cpos'])**2 + ((df['lod'] - y)/df['lod'])**2).idxmin()
         marker_attribute = df.loc[closest_point_index, 'cpos']
         x_attribute = df.loc[closest_point_index, 'cpos']
-        y_attribute = df.loc[closest_point_index, '-logP']
+        y_attribute = df.loc[closest_point_index, 'lod']
         txt = "Pos: "+ str(x_attribute) + ", LOD: " + str(y_attribute) + ": " + marker_attribute
         hover_annot.set_text(txt)
         hover_annot.xy = (x_attribute, y_attribute)
@@ -448,11 +446,11 @@ def draw_qtl_plot(df, draw_peak, threshold_value, hovering_enabled, trait1, trai
     plt.legend(loc='upper right')
     qtl_plot._legend.remove()
     
-    qtl_plot.figure.suptitle(f'Overlapping QTL plots for {trait1} {trait2}', fontsize=20)
+    qtl_plot.figure.suptitle(f'Overlapping QTL plots for selected_traits', fontsize=20)
     
     plt.show() # need to uncomment to be able to display and add marker annotation
     
-    qtl_plot.figure.savefig(f'../../output/Overlapping_QTL_plots_{trait1}_{trait2}', dpi=500)
+    qtl_plot.figure.savefig(f'../../output/Overlapping_QTL_plots_selected_traits', dpi=500)
     
     
     
@@ -487,9 +485,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     
-    trait1=input("Please confirm trait 1:")
-    trait2=input("Please confirm trait 2:")
-    
     _, file_extension = os.path.splitext(args.file)
     
     if file_extension.lower() == '.csv':
@@ -503,7 +498,7 @@ if __name__ == "__main__":
     
     # Proceed to drawing
     if args.type=='gwas':
-        draw_manhattan_plot(data, args.peak, args.threshold, args.hover, trait1, trait2) 
+        draw_manhattan_plot(data, args.peak, args.threshold, args.hover) 
         
     elif args.type=='qtl':
-        draw_qtl_plot(data, args.peak, args.threshold, args.hover, trait1, trait2)
+        draw_qtl_plot(data, args.peak, args.threshold, args.hover)

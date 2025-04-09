@@ -5,8 +5,8 @@ Script 22
 
 This script takes:
 - filtered dataset: ../../../diabetes_gemma_association_data_plrt_filtered.csv
-- selected traits: ../../processed_data/priori_list_traits.csv
 - marker annotation file: ../../processed_data/BXD_snps.txt
+- comma separated string of traits of interest: eg -> 'UTHSCGutExL0414 LR, UTILMBXDhippNON1112 DE1, EPFLMouseLiverHFCEx0413 HNF4ADNDMTI, UMCG0907Myeloid ITFLD'
 
 It returns the rows of the dataset containing pair of traits in selection
 
@@ -16,10 +16,9 @@ It saves in respective csv file
 
 import argparse
 import pandas as pd
-from math import log
 
 
-def extract_data(data_file, column_name, pair):
+def extract_data(data_file, column_name, list_interest):
     
     # Extract data from data with a specific value in a given column
     
@@ -27,14 +26,18 @@ def extract_data(data_file, column_name, pair):
     
     cont=[]
     
-    for trait in pair:
+    for trait in list_interest:
         dataset_name = trait.split(' ')[0]
         initial_ori1 = trait.split(' ')[-1][0]
         initial_pro1 = initial_ori1.lower()
         initial_ori2 = trait.split(' ')[-1][1]
         initial_pro2 = initial_ori2.lower()
         
-        indices=[(dataset_name in desc) and (initial_ori1 == desc.split(' ')[0][0] or initial_pro1 == desc.split(' ')[0][0]) and (initial_ori2 == desc.split(' ')[1][0] or initial_pro2 == desc.split(' ')[1][0]) for desc in list(data[column_name])] # select lines related to traits of interest based on appearance of both dataset name and initial in trait desc
+        indices=[(dataset_name in desc) and 
+        (initial_ori1 == desc.split(' ')[0][0].lower() or initial_pro1 == desc.split(' ')[0][0].lower()) and
+        (initial_ori2 == desc.split(' ')[1][0].lower() or initial_pro2 == desc.split(' ')[1][0].lower()) 
+        for desc in list(data[column_name])] # select lines related to traits of interest based on appearance of both dataset name and initial in trait desc
+        
         cont.append(data[indices])
         
 
@@ -45,15 +48,6 @@ def extract_data(data_file, column_name, pair):
 def process_data(new_data, markers_info):
     
     # Make a series of transformations
-    
-    # Compute -logP
-    
-    pvals = list(new_data['p_lrt'])
-    
-    logps = [-log(p) for p in pvals] 
-    
-    new_data['-logP']=logps
-    
     
     markers_dict={}
     
@@ -83,15 +77,23 @@ def process_data(new_data, markers_info):
     trans_chr=[]
     
     for num in ori_chr:
-        if num == 88: # encode chromosome 88 back to X
-            num='X'
+        
         trans_chr.append(num)
         
     new_data['chr']=trans_chr 
     
     
+    # Remove rows where lod > 50
     
-    return new_data
+    outliers = [lod>50 for lod in new_data['lod']]
+    
+    indices = new_data['lod'].index
+    
+    outliers_indices = [indices[ind] for (ind, val) in enumerate(outliers) if val == True]
+    
+    new_data.drop(outliers_indices, axis=0, inplace=True)
+    
+    return new_data.sort_values(by=['chr']) # sort chromosome numbers
     
     
     
@@ -103,20 +105,13 @@ if __name__ == '__main__':
     
     parser.add_argument('file', type=str, help='Path to the dataset file to process')    
     
-    parser.add_argument('--traits', type=str, help='Path to file with selected traits')
-    
     parser.add_argument('--anno', type=str, help='Path to file with marker annotations')
+    
+    parser.add_argument('--traits', type=str, help='comma separated string of traits of interest')
     
     
     args = parser.parse_args()
     
-    
-    # Get selected traits
-    
-    trait_file = open(args.traits)
-    full_traits = trait_file.read().split(',')
-    full_traits = full_traits[:-1] # leave empty string at end
-    trait_file.close()
     
     # Get markers annotations
     
@@ -125,25 +120,19 @@ if __name__ == '__main__':
     file_markers.close()
     
     
-    for trait1 in full_traits[:]:
-        for trait2 in full_traits[1:]:
-            if trait1 != trait2:
+    # Get traits of interest
+    
+    list_interest = args.traits.split(', ')
+    
                 
-                print(f'Processing {trait1} and {trait2}')
+    # Extract rows of data file related to traits of interest
+    new_data = extract_data(args.file, 'full_desc', list_interest)
                 
-                # Extract rows of data file related to the 2 traits
-                pair = [trait1, trait2]
-                new_data = extract_data(args.file, 'full_desc', pair)
-                
-                # process the dataframe obtained
-                final_data = process_data(new_data, markers_info)
-                
-                # Remove spacing in trait names
-                new_trait1 = ''.join(word for word in trait1.split(' '))
-                new_trait2 = ''.join(word for word in trait2.split(' '))
-                
-                # Save in corresponding csv file
-                final_data.to_csv(f'../../../diabetes_gemma_association_data_plrt_filtered_selected/{new_trait1}_{new_trait2}.csv', index=False)
+    # process the dataframe obtained
+    final_data = process_data(new_data, markers_info)
+                          
+    # Save in corresponding csv file
+    final_data.to_csv(f'../../../diabetes_gemma_association_data_plrt_filtered_selected_traits.csv', index=False)
     
     
   
