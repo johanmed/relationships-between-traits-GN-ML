@@ -1,73 +1,54 @@
 #!/usr/bin/env python
 """
-Script 16
-Add columns clusters_hits and clusters_qtl (cluster assigned) to dataset using the best classical model between Birch and Kmeans, respectively for hits and qtl modeling
-Add columns distances_hits and distances_qtl (distance to the centroid of the cluster) to dataset using best classical model, respectively for hits and qtl modeling
-"""
+Script 17
 
-from vector_data_pre import preprocessing_hits, preprocessing_qtl # import transformation pipelines previously defined
+Add encoder final representation to dataset respectively for hits and qtl modeling
+"""
 
 import pandas as pd
 
-from sklearn.pipeline import Pipeline
-
-import joblib
+import tensorflow as tf
 
 import os
 
 # 1. Read in original data again
 
-full_X_rec=pd.read_csv('../../../diabetes_gemma_association_data_plrt_filtered.csv', usecols=['chr_num', 'pos', 'p_lrt'])
+full_X_rec=pd.read_csv('../../../diabetes_gemma_association_data_plrt_filtered.csv', usecols=['chr_num', 'lod']) # take only chr_num and lod as best autoencoder models using qtl
 
-#print('full_X_rec looks like: \n', full_X_rec)
+#print('full_X_rec looks like: \n', full_X_rec.head())
 
-def predict_cluster_distance(full_X_rec, preprocessing_type, model):
+def predict_new_repr(full_X_rec, best_model):
     """
-    Fit the same pipeline to the complete dataset
-    Predict the cluster of each observation
+    Predict the new representation of each observation for whole dataset
     """
-    clustering_model=Pipeline([('preprocessing_type', preprocessing_type), ('model', model)])
     
-    clustering_model.fit(full_X_rec)
+    predictions = best_model.predict(full_X_rec) # get clusters prediction
     
-    clusters_predicted=clustering_model.predict(full_X_rec) # get clusters prediction
-    
-    raw_distances=clustering_model.transform(full_X_rec) # get distances to all centroids
-    
-    processed_distances=[max(arr_dist) for arr_dist in raw_distances] # select the distance to the closest centroid (centroid of the assigned cluster) only
-    
-    return clusters_predicted, processed_distances
+    return predictions
 
 
-# 2. Use best model to extract clusters
+# 2. Use best deep learning model to extract new representation
 
-best_model=input('Please type the abbreviation of the best model you have got: ') # Get best model information from keyboard for dynamism
 
-if os.path.exists(f'{best_model}_clustering/{best_model}_clustering_hits.pkl'): # check best model for hits
-
-    best_model_clust=joblib.load(f'{best_model}_clustering/birch_clustering_hits.pkl') # load the best model for hits
+if os.path.exists('deep_learning_unsupervised_qtl/best_unsup_model_by_qtl.keras'): # check the best model for QTL
     
-    clusters_hits, distances_hits=predict_cluster_distance(full_X_rec, preprocessing_hits, best_model_clust)
+    best_model=tf.keras.models.load_model('deep_learning_unsupervised_qtl/best_unsup_model_by_qtl.keras') # load the best model for hits
     
-    full_X_rec['clusters_hits']=clusters_hits # add cluster information to dataframe for hits modeling
-    full_X_rec['distances_hits']=distances_hits # add distance to closest centroid to dataframe for hits modeling
-
-
-if os.path.exists(f'{best_model}_clustering/{best_model}_clustering_qtl.pkl'): # check the best model for QTL
+    stacked_encoder = best_model.layers[0] # extract encoder part
     
-    best_model_clust=joblib.load(f'{best_model}_clustering/birch_clustering_qtl.pkl') # load the best model for QTL
+    predictions=predict_new_repr(full_X_rec, stacked_encoder)
     
-    clusters_qtl, distances_qtl=predict_cluster_distance(full_X_rec, preprocessing_qtl, best_model_clust)
-    
-    full_X_rec['clusters_qtl']=clusters_qtl # add cluster information to dataframe for QTL modeling
-    full_X_rec['distances_qtl']=distances_qtl # add distance to closest centroid to dataframe for QTL modeling
+    full_X_rec['label']=predictions # add encoder's predictions to dataframe for hits modeling
 
-print(full_X_rec.iloc[:5,:])
 
-desc_X=pd.read_csv('../../../diabetes_gemma_association_data_plrt_filtered.csv', usecols=['full_desc'])
+#print('new full_X_rec:\n', full_X_rec.head())
 
-to_save=pd.concat([full_X_rec, desc_X], axis=1) # add description information 
+
+rem_X=pd.read_csv('../../../diabetes_gemma_association_data_plrt_filtered.csv', usecols=['pos', 'full_desc'])
+
+to_save=pd.concat([full_X_rec, rem_X], axis=1) # add description information 
 
 #print('to save looks like:\n', to_save)
+
 
 to_save.to_csv('../../../diabetes_gemma_association_data_plrt_filtered_clustering_data.csv', index=False) # save the new dataset for further processing

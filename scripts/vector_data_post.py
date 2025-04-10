@@ -2,7 +2,7 @@
 
 """
 Summary:
-Script 17
+Script 18
 This file contains code to load data from dataset AFTER unsupervised machine learning
 Data of each column are plotted in histogram to assess quality
 Training, validation and test sets are defined from X data randomly
@@ -41,7 +41,7 @@ import os
 out_dir=os.path.abspath('../../output/')
 
 fig, ax=plt.subplots(figsize=(20, 10))
-training_set.hist(ax=ax, bins=50, color='black', alpha=0.7)
+training_set.hist(ax=ax, color='black', alpha=0.7)
 plt.show()
 fig.savefig(os.path.join(out_dir, "Project_Quality_Check_Before_Transformation_v2"), dpi=500)
 
@@ -60,7 +60,7 @@ clustered_training_set, clustered_validation_set, clustered_test_set=perform_clu
 # 5. Plot histogram of transformed training features and confirm quality
 
 fig, ax=plt.subplots(figsize=(20, 20))
-clustered_training_set.hist(ax=ax, bins=50, color='black', alpha=0.7)
+clustered_training_set.hist(ax=ax, color='black', alpha=0.7)
 plt.show()
 fig.savefig(os.path.join(out_dir, "Project_Quality_Check_After_Transformation_v2"), dpi=500)
 

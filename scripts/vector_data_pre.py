@@ -16,7 +16,7 @@ Data of each column of the training are plotted in histogram to confirm quality
 import numpy as np
 import pandas as pd
 
-full_X=pd.read_csv('../../../diabetes_gemma_association_data_plrt_filtered.csv', usecols=['chr_num', 'pos', 'p_lrt', 'full_desc'])
+full_X=pd.read_csv('../../../diabetes_gemma_association_data_plrt_filtered.csv', usecols=['chr_num', 'pos', 'lod', 'full_desc'])
 
 print('full_X looks like: \n', full_X)
 
@@ -30,15 +30,15 @@ def define_sets(X):
     X_train, X_valid=train_test_split(X_train_valid, test_size=0.1, random_state=2024)
     return X_train, X_valid, X_test
     
-training_set, validation_set, test_set=define_sets(full_X)
+train_set, valid_set, test_set=define_sets(full_X)
 
 # Get training + validation with full_desc
 
-training_validation_set=pd.concat([training_set, validation_set]) # useful later clustering results analysis
+training_validation_set=pd.concat([train_set, valid_set]) # useful later clustering results analysis
 
-training_set= training_set[['chr_num', 'pos', 'p_lrt']] # select features of interest
-validation_set= validation_set[['chr_num', 'pos', 'p_lrt']]
-test_set= test_set[['chr_num', 'pos', 'p_lrt']]
+training_set= train_set[['chr_num', 'pos', 'lod']] # select features of interest
+validation_set= valid_set[['chr_num', 'pos', 'lod']]
+testing_set= test_set[['chr_num', 'pos', 'lod']]
 
 # 3. Plot histogram of training features and assess quality
 
@@ -48,7 +48,7 @@ import os
 out_dir=os.path.abspath('../../output/')
 
 fig, ax=plt.subplots(figsize=(20, 10))
-training_set.hist(ax=ax, bins=50, color='black', alpha=0.7)
+training_set.hist(ax=ax, color='black', alpha=0.7)
 plt.show()
 fig.savefig(os.path.join(out_dir, "Project_Quality_Check_Before_Transformation_v1"), dpi=500)
 
@@ -85,7 +85,7 @@ from sklearn.preprocessing import StandardScaler # import transformer
 def scale(X_train, X_valid, X_test):
     std_scaler=StandardScaler()
     for i in X_train.columns:
-        if i=='desc':
+        if i=='desc' or 'full_desc':
             continue
         else:
             std_scaler1=std_scaler.fit_transform((np.array(X_train[i])).reshape(-1, 1)) # fit transformer on training set
@@ -106,7 +106,7 @@ scaled_training_set, scaled_validation_set, scaled_test_set=scale(clustered_trai
 # 6. Plot histogram of transformed training features and confirm quality
 
 fig, ax=plt.subplots(figsize=(20, 20))
-scaled_training_set.hist(ax=ax, bins=50, color='black', alpha=0.7)
+scaled_training_set.hist(ax=ax, color='black', alpha=0.7)
 plt.show()
 fig.savefig(os.path.join(out_dir, "Project_Quality_Check_After_Transformation_v1"), dpi=500)
 
@@ -119,6 +119,6 @@ from sklearn.decomposition import PCA
 
 custom_preprocessing=Pipeline([('standardize', StandardScaler()), ('reduce', PCA(n_components=2, random_state=2024))])
 
-preprocessing_hits=ColumnTransformer([('plrt_chr_num_pos', custom_preprocessing, ['p_lrt', 'chr_num', 'pos'])], remainder=StandardScaler())
+preprocessing_hits=ColumnTransformer([('lod_chr_num_pos', custom_preprocessing, ['lod', 'chr_num', 'pos'])], remainder=StandardScaler())
 
-preprocessing_qtl=ColumnTransformer([('plrt_chr_num', custom_preprocessing, ['p_lrt', 'chr_num'])], remainder=StandardScaler())
+preprocessing_qtl=ColumnTransformer([('lod_chr_num', custom_preprocessing, ['lod', 'chr_num'])], remainder=StandardScaler())

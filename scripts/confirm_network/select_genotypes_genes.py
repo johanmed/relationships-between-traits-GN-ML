@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Script 29
@@ -6,7 +6,7 @@ Script 29
 Extracts genotypes of lines for genes found -> BNW analysis
 
 Input: 
-- list of markers and genes -> ../../processed_data/markers_only_genes.csv
+- list of markers and genes -> ../../raw_data/markers2genes_only.csv
 - genotypes for markers -> ../../processed_data/diabetes_genotype_file.bimbam
 
 """
@@ -15,7 +15,7 @@ import pandas as pd
 
 collection = {}
 
-with open('../../processed_data/markers_only_genes.csv') as file1:
+with open('../../raw_data/markers2genes_only.csv') as file1:
     
     markers_genes = file1.readlines()
     
@@ -32,6 +32,7 @@ with open('../../processed_data/markers_only_genes.csv') as file1:
     
         for g in gene:
             g = g.strip('\n')
+            g = g.strip(' ')
             genes.append([ind, g])
         
     with open('../../processed_data/original_BXD_genotypes_project.bimbam') as file2:
@@ -56,4 +57,4 @@ with open('../../processed_data/markers_only_genes.csv') as file1:
         
 final_data = pd.DataFrame(collection)
 
-final_data.to_csv('../../output/bnw_genes_genotypes.csv', index=False)
+final_data.to_csv('bnw_genes_genotypes.csv', index=False)

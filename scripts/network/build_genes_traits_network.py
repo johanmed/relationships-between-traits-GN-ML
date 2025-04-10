@@ -65,7 +65,7 @@ if __name__ == "__main__":
     
         nx.draw_networkx(graph, pos, **lay_render.attrs)
     
-        plot.set_title(f'Genetic network for selection of traits')
+        plot.set_title(f'Genetic network for selection of traits', fontsize=20)
         
         plot.set_axis_off()
     

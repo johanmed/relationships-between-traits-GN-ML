@@ -8,6 +8,7 @@
 
 import sys
 import argparse
+from math import log
 
 # Pass association files as arguments
 
@@ -26,6 +27,8 @@ for fn in args.files:
         for line in f.readlines():
             chr_num,rs,pos,miss,a1,a0,af,beta,se,l_mle,p_lrt,full_desc = line.rstrip('\n').split('\t')
             
+            lod = -log(p_lrt) # transform p-values to LOD
+            
             if chr_num=='chr':
                 continue # ignore header
             elif (chr_num=='-9'):
@@ -33,7 +36,7 @@ for fn in args.files:
             elif chr_num=='X' or chr_num=='Y':
                 chr_num=ord(chr_num)
                     
-            container.append([chr_num, pos, af, beta, se, l_mle, p_lrt, full_desc])
+            container.append([chr_num, pos, af, beta, se, l_mle, lod, full_desc])
         
                  
                  
@@ -41,6 +44,6 @@ for fn in args.files:
 
 import pandas as pd
 
-df=pd.DataFrame(container, columns=['chr_num', 'pos', 'af', 'beta', 'se', 'l_mle', 'p_lrt', 'full_desc'])
+df=pd.DataFrame(container, columns=['chr_num', 'pos', 'af', 'beta', 'se', 'l_mle', 'lod', 'full_desc'])
 
 df.to_csv('../../../diabetes_gemma_association_data2.csv', index=False, header=False) # need to save the data in chunk and omit header accordingly as all the files cant be processed and turned into a DataFrame at once
