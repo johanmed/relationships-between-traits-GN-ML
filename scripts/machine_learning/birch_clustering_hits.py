@@ -131,7 +131,7 @@ class Columns2Clustering(ModellingBirch):
         
             start=0
         
-            for ind, chromo in enumerate(anno):
+            for chromo in sorted(anno):
                 
                 if chromo in dic.keys():
                     continue
@@ -144,9 +144,17 @@ class Columns2Clustering(ModellingBirch):
             unique_labels = list(dic.values())
             unique_names = list(dic.keys())
             
+            # Rename chromo 88 to X
+            
+            final_names = []
+            for name in unique_names:
+                if name == 88:
+                    final_names.append('X')
+                final_names.append(name)
+            
             for ind, label in enumerate(unique_labels):
                 mask = np.array(labels) == label
-                plt.scatter(X[mask, 0], X[mask, 1], c=colors[ind], label=label, alpha=0.7, edgecolors='black', linewidth=0.5)
+                plt.scatter(X[mask, 0], X[mask, 1], c=colors[ind], label=final_names[ind], alpha=0.7, edgecolors='black', linewidth=0.5)
                 
             
         plt.xlabel("PC 1", fontsize=10)
@@ -158,32 +166,24 @@ class Columns2Clustering(ModellingBirch):
 
 # Main
 
-import joblib
 
 def main():
-    
-    if os.path.exists('birch_clustering/birch_clustering_hits.pkl'): # check if this has already been saved
-        
-        print('The model has already been trained and saved on disk!')
-        
-        
-    else: # Proceed to clustering and  save model if not yet done
 
-        clustering_task=Columns2Clustering(X_train, X_valid, X_test)
+    clustering_task=Columns2Clustering(X_train, X_valid, X_test)
 
-        X_train_features, X_valid_features, X_test_features=clustering_task.get_features()
+    X_train_features, X_valid_features, X_test_features=clustering_task.get_features()
         
-        for n_clusters in range(2, 11): # try values between 2 and 10
+    for n_clusters in range(2, 11): # try values between 2 and 10
 
-            actual_clustering=clustering_task.perform_birch(X_valid_features, n_clusters)
+        actual_clustering=clustering_task.perform_birch(X_valid_features, n_clusters)
 
-            Columns2Clustering.visualize_plot(Columns2Clustering.plot_birch, actual_clustering[1], X_valid_features, n_clusters) # Plot only validation data (more manageable than training data for plotting)
+        Columns2Clustering.visualize_plot(Columns2Clustering.plot_birch, actual_clustering[1], X_valid_features, n_clusters) # Plot only validation data (more manageable than training data for plotting)
 
         
-        Columns2Clustering.annotate_plot(X_valid_features, list(desc_valid), 'trait')
+    Columns2Clustering.annotate_plot(X_valid_features, list(desc_valid), 'trait')
         
         
-        Columns2Clustering.annotate_plot(X_valid_features, list(X_valid['chr_num']), 'chromo')
+    Columns2Clustering.annotate_plot(X_valid_features, list(X_valid['chr_num']), 'chromo')
     
 
 main()
