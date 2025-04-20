@@ -161,6 +161,8 @@ labels_dup = ['Traits with outliers for p-values hits', 'Traits with no outlier'
 
 gwas_data = [(trait, len(results[trait])) for trait in results.keys()]
 
+data_only = [len(results[trait]) for trait in results.keys()]
+
 
 def display(data, labels):
     # Format printout
@@ -177,3 +179,19 @@ for trait, num_loci in gwas_data:
     print(f'The trait {trait} has {num_loci} problematic loci')
 
 
+# 5. Build histogram of number of problematic markers
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(20, 20))
+
+data_only = pd.DataFrame(data_only)
+
+data_only[0].hist(ax=ax, color='black', alpha=0.3, grid=False, cumulative=True, density=True)
+
+ax.set_ylabel('Frequency', fontsize=15)
+
+ax.set_xlabel('Number of problematic markers', fontsize=15)
+
+fig.savefig('../../output/distribution_problematic_markers.png', dpi=500)
